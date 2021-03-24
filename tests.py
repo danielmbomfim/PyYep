@@ -22,7 +22,8 @@ class TestInputItem(unittest.TestCase):
 		input_.value = 'a'
 		with self.assertRaises(ValidationError): form.validate()
 
-	def test_error_hooks(self):
+	def test_hooks(self):
+		local_success_hook = Mock(return_value='success')
 		global_error_hook = Mock(return_value='global_error')
 		local_error_hook = Mock(return_value='local_error')
 
@@ -30,23 +31,17 @@ class TestInputItem(unittest.TestCase):
 			raise ValidationError('test', '')
 
 		form = Schema([
-			InputItem('test', SimpleInput(''), 'value').validate(custom_validator)
-		], global_error_hook)
+			InputItem('test', SimpleInput(''), 'value').validate(custom_validator),
+			InputItem('test1', SimpleInput(''), 'value', on_fail=local_error_hook).validate(custom_validator),
+			InputItem('test2', SimpleInput(''), 'value', on_success=local_success_hook)
+		], global_error_hook, False)
 
 		try:
 			form.validate()
 		except ValidationError:
 			pass
 
-		form = Schema([
-			InputItem('test', SimpleInput(''), 'value', local_error_hook).validate(custom_validator)
-		], global_error_hook)
-
-		try:
-			form.validate()
-		except ValidationError:
-			pass
-
+		local_success_hook.assert_called_once()
 		global_error_hook.assert_called_once()
 		local_error_hook.assert_called_once()
 

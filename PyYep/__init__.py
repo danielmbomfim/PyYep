@@ -105,8 +105,10 @@ class InputItem():
 		the property or method name that store the value in the input
 	_validators: List[Callable[[Any], None]]
 		a list of validators
+	on_success: Callable[[], None]
+		a callable used as a local success hook
 	on_fail: Callable[[], None]
-		a callable to be used as a local error hook
+		a callable used as a local error hook
 
 	Methods
 	-------
@@ -123,7 +125,7 @@ class InputItem():
 	'''
 
 	def __init__(self, name: str, input_: Any, path: str,
-		on_fail: Optional[Callable[[], None]] = None):
+		on_success: Optional[Callable[[], None]] = None, on_fail: Optional[Callable[[], None]] = None):
 		'''
 		Constructs all the necessary attributes for the input item object.
 
@@ -132,6 +134,7 @@ class InputItem():
 			name (str): the name of the input item
 			input_ (Any): the input itself
 			path (str): the property or method name that store the value in the input
+			on_success (Callable[[], None]): a callable to be used as a local success hook
 			on_fail (Callable[[], None]): a callable to be used as a local error hook
 		'''
 
@@ -142,6 +145,7 @@ class InputItem():
 
 		self._validators = []
 		self.on_fail = on_fail
+		self.on_success = on_success
 
 	def _set_parent_form(self, form: Schema) -> None:
 		'''
@@ -195,6 +199,9 @@ class InputItem():
 					self.form.on_fail()
 
 				raise error
+
+		if self.on_success is not None:
+			self.on_success()
 
 		return result
 
