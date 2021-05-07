@@ -1,10 +1,46 @@
 import re
 import decimal
+import functools
 from typing import Any, TYPE_CHECKING
+from collections.abc import Iterable
 from .exceptions import ValidationError
 
 if TYPE_CHECKING:
 	from .__init__ import InputItem, Schema
+
+
+def validator(func):
+	'''Wraps a Validator method to be used as a validator function
+	
+	Parameters
+	----------
+	func : Callable
+	    the function that will be used as validator
+	
+	Returns
+	-------
+	wrapper (Callable)
+	    the wrapper function of the decorator
+	'''
+
+	@functools.wraps(func)
+	def wrapper(*args):
+		'''A wrapper function that appends a validator in the input's validators list
+		
+		Parameters
+		----------
+		*args
+		    the positional orguments received by the wrapped method
+		
+		Returns
+		-------
+		args[0] (Type[Validator]): the self argument passed to the method being wrapped
+		'''
+
+		args[0].input_ = args[0].input_.validate(lambda v: func(*args, v))
+		return args[0]
+
+	return wrapper
 
 
 class Validator():
@@ -60,19 +96,8 @@ class Validator():
 
 		self.input_.form = form
 
-	def required(self) -> 'Validator':
-		'''
-		Append a required validator in the input's validators list
-
-		Returns
-		-------
-		self (Validator): The validator itself
-		'''
-
-		self.input_ = self.input_.validate(self._required)
-		return self
-
-	def _required(self, value: Any) -> None:
+	@validator
+	def required(self, value: Any) -> None:
 		'''
 		Verify if the received value is empty
 
@@ -93,6 +118,31 @@ class Validator():
 
 		if value is None or (not value and value != 0):
 			raise ValidationError(self.name, 'Empty value passed to a required input')
+
+	@validator
+	def in_(self, data_structure: Iterable, value: Any):
+		'''
+		Verify if the received value is present in the received data structure
+
+		Parameters
+		----------
+		value : (Any)
+			the value that will be checked
+		data_structure : (Iterable)
+			a iterable in wich the received value is supposed to be present
+
+		Raises
+		----------
+		ValidationError:
+			if the value is not present in the data structure
+
+		Returns
+		________
+		None
+		'''
+
+		if value not in data_structure:
+			raise ValidationError(self.name, 'Value not present in the received data structure')
 
 	def verify(self):
 		pass
@@ -129,19 +179,8 @@ class StringValidator(Validator):
 		If the value is not None converts it to a string and pass it to the input verify method
 	'''
 
-	def email(self) -> 'StringValidator':
-		'''
-		Append a email validator in the input's validators list
-
-		Returns
-		-------
-		self (Validator): The validator itself
-		'''
-
-		self.input_ = self.input_.validate(self._email)
-		return self
-
-	def _email(self, value: str) -> None:
+	@validator
+	def email(self, value: str) -> None:
 		'''
 		Verify if the received value is a valid email address
 
@@ -163,24 +202,8 @@ class StringValidator(Validator):
 		if re.fullmatch(r'[^@]+@[^@]+\.[^@]+', value) is None:
 			raise ValidationError(self.name, 'Value for email type does not match a valid format')
 
-	def min(self, value: int) -> 'StringValidator':
-		'''
-		Append a minimum validator in the input's validators list
-
-		Parameters
-		----------
-		value : str
-			the minimun length value that will be allowed
-
-		Returns
-		-------
-		self (Validator): The validator itself
-		'''
-
-		self.input_ = self.input_.validate(lambda v: self._min(value, v))
-		return self
-
-	def _min(self, min: int, value: str) -> None:
+	@validator
+	def min(self, min: int, value: str) -> None:
 		'''
 		Verify if the length of the received value is equal or higher than the min
 
@@ -204,24 +227,8 @@ class StringValidator(Validator):
 		if len(value) < min:
 			raise ValidationError(self.name, 'Value too short received')
 
-	def max(self, value: int) -> 'StringValidator':
-		'''
-		Append a maximum validator in the input's validators list
-
-		Parameters
-		----------
-		value : str
-			the maximun length value that will be allowed
-
-		Returns
-		-------
-		self (Validator): The validator itself
-		'''
-
-		self.input_ = self.input_.validate(lambda v: self._max(value, v))
-		return self
-
-	def _max(self, max: int, value: str) -> None:
+	@validator
+	def max(self, max: int, value: str) -> None:
 		'''
 		Verify if the length of the received value is equal or lower than the max
 
@@ -292,24 +299,8 @@ class NumericValidator(Validator):
 		If the value is not None converts it to a string and pass it to the input verify method
 	'''
 
-	def min(self, value: int) -> 'NumericValidator':
-		'''
-		Append a minimum validator in the input's validators list
-
-		Parameters
-		----------
-		value : int
-			the minimun value that will be allowed
-
-		Returns
-		-------
-		self (Validator): The validator itself
-		'''
-
-		self.input_ = self.input_.validate(lambda v: self._min(value, v))
-		return self
-
-	def _min(self, min: int, value: decimal.Decimal) -> None:
+	@validator
+	def min(self, min: int, value: decimal.Decimal) -> None:
 		'''
 		Verify if the received value is equal or higher than the min
 
@@ -333,24 +324,8 @@ class NumericValidator(Validator):
 		if value < min:
 			raise ValidationError(self.name, 'Value too small received')
 
-	def max(self, value: int) -> 'NumericValidator':
-		'''
-		Append a maximum validator in the input's validators list
-
-		Parameters
-		----------
-		value : str
-			the maximun value that will be allowed
-
-		Returns
-		-------
-		self (Validator): The validator itself
-		'''
-
-		self.input_ = self.input_.validate(lambda v: self._max(value, v))
-		return self
-
-	def _max(self, max: int, value: decimal.Decimal) -> None:
+	@validator
+	def max(self, max: int, value: decimal.Decimal) -> None:
 		'''
 		Verify if the the received value is equal or lower than the max
 

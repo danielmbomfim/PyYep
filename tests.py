@@ -108,6 +108,16 @@ class TestStringValidator(unittest.TestCase):
 		input_.value = '1234567890+'
 		with self.assertRaises(ValidationError): form.validate()
 
+	def test_in_(self):
+		input_ = SimpleInput('12345')
+		form = Schema([
+			InputItem('test', input_, 'value').string().in_(['', '1', '12345'])
+		])
+
+		self.assertEqual(form.validate()['test'], '12345')
+		input_.value = '1234'
+		with self.assertRaises(ValidationError): form.validate()
+
 
 class TestNumberValidator(unittest.TestCase):
 	def test_min_and_max(self):
