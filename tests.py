@@ -65,6 +65,22 @@ class TestInputItem(unittest.TestCase):
 		except ValidationError as error:
 			self.assertTrue(error.inner)
 
+	def test_conditions(self):
+		input_ = SimpleInput('test01')
+
+		def custom_validator(value):
+			raise ValidationError('test', 'test')
+
+		form = Schema([
+			InputItem('test', input_, 'value').validate(custom_validator).\
+			condition(lambda v: v == 'test01')
+		])
+
+		with self.assertRaises(ValidationError): form.validate()
+
+		input_.value = 'test02'
+		self.assertEqual(form.validate()['test'], 'test02')
+
 
 class TestStringValidator(unittest.TestCase):
 	def test_required(self):

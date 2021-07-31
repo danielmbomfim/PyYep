@@ -144,6 +144,7 @@ class InputItem():
 		self._path = path
 
 		self._validators = []
+		self._conditions = {}
 		self.on_fail = on_fail
 		self.on_success = on_success
 
@@ -190,6 +191,9 @@ class InputItem():
 			result = result()
 
 		for validator in self._validators:
+			if validator in self._conditions and not self._conditions[validator](result):
+				continue
+
 			try:
 				validator(result)
 			except ValidationError as error:
@@ -215,6 +219,23 @@ class InputItem():
 		'''
 
 		self._validators.append(validator)
+		return self
+
+	def condition(self, condition: Callable[[Any], bool]) -> 'InputItem':
+		'''
+		Set a condition for the execution of the previous validator
+
+		Parameters
+		----------
+		condition : Callable
+			a callable that return a boolean that defines if the condition was satisfied
+
+		Returns
+		-------
+		InputItem
+		'''
+
+		self._conditions[self._validators[-1]] = condition
 		return self
 
 	def string(self) -> StringValidator:

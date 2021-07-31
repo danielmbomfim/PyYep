@@ -1,7 +1,7 @@
 import re
 import decimal
 import functools
-from typing import Any, TYPE_CHECKING
+from typing import Any, Callable, TYPE_CHECKING
 from collections.abc import Iterable
 from .exceptions import ValidationError
 
@@ -76,6 +76,23 @@ class Validator():
 
 		self.input_ = input_
 		self.name = input_.name
+
+	def condition(self, condition: Callable[[Any], bool]) -> 'Validator':
+		'''
+		Set a condition for the execution of the previous validator
+
+		Parameters
+		----------
+		condition : Callable
+			a callable that return a boolean that defines if the condition was satisfied
+
+		Returns
+		-------
+		Validator
+		'''
+
+		self.input_.condition(condition)
+		return self
 
 	def _set_parent_form(self, form: 'Schema') -> None:
 		'''
