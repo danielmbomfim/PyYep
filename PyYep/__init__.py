@@ -85,7 +85,7 @@ class Schema():
 			raise ValidationError('', 'One or more inputs failed during validation', inner=errors)
 
 		return result
-	
+
 
 class InputItem():
 	'''

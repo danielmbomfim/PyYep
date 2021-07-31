@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
 from PyYep import Schema, InputItem, ValidationError
+from PyYep.locale.pt_BR import DocumentsValidators as DocumentsValidator_pt_BR
 
 
 class TestInputItem(unittest.TestCase):
@@ -63,6 +64,7 @@ class TestInputItem(unittest.TestCase):
 			form.validate()
 		except ValidationError as error:
 			self.assertTrue(error.inner)
+
 
 class TestStringValidator(unittest.TestCase):
 	def test_required(self):
@@ -134,6 +136,30 @@ class TestNumberValidator(unittest.TestCase):
 		with self.assertRaises(ValidationError): form.validate()
 
 		input_.value = 11
+		with self.assertRaises(ValidationError): form.validate()
+
+
+class TestDocumentValidator_pt_BR(unittest.TestCase):
+	def test_cpf(self):
+		input_ = SimpleInput('875.920.020-00')
+		form = Schema([
+			InputItem('test', input_, 'value').validate(DocumentsValidator_pt_BR().cpf)
+		])
+
+		self.assertEqual(form.validate()['test'], '875.920.020-00')
+		input_.value = '875.920.020-01'
+
+		with self.assertRaises(ValidationError): form.validate()
+
+	def test_cnpj(self):
+		input_ = SimpleInput('88.724.415/0001-59')
+		form = Schema([
+			InputItem('test', input_, 'value').validate(DocumentsValidator_pt_BR().cnpj)
+		])
+
+		self.assertEqual(form.validate()['test'], '88.724.415/0001-59')
+		input_.value = '88.724.415/0001-58'
+
 		with self.assertRaises(ValidationError): form.validate()
 
 
