@@ -114,12 +114,22 @@ class InputItem():
 	-------
 	_set_parent_form(form):
 		Set the parent schema of the input item
+
 	verify(result):
 		Execute the inputs validators and return the result
+
 	validate(validator):
 		receives a validator and appends it on the validators list
+
+	condition(condition):
+		Set a condition for the execution of the previous validator
+
+	modifier(modifier):
+		Set a modifier to allow changes in the value after validation
+
 	string():
 		create a StringValidator using the input item as base
+
 	number():
 		create a NumericValidator using the input item as base
 	'''

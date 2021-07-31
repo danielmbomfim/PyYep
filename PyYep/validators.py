@@ -61,8 +61,17 @@ class Validator():
 	_set_parent_form(form):
 		Set the parent schema
 
+	condition(condition):
+		Set a condition for the execution of the previous validator
+
+	modifier(modifier):
+		Set a modifier to allow changes in the value after validation
+
 	required(value):
 		Verify if the received value is empty
+
+	in_(data_structure, value):
+		verifies the presence of a value into a data structure
 	'''
 
 	def __init__(self, input_: 'InputItem') -> None:
