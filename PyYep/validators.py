@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 def validator(func):
 	'''Wraps a Validator method to be used as a validator function
-	
+
 	Parameters
 	----------
 	func : Callable
 	    the function that will be used as validator
-	
+
 	Returns
 	-------
 	wrapper (Callable)
@@ -26,12 +26,12 @@ def validator(func):
 	@functools.wraps(func)
 	def wrapper(*args):
 		'''A wrapper function that appends a validator in the input's validators list
-		
+
 		Parameters
 		----------
 		*args
 		    the positional orguments received by the wrapped method
-		
+
 		Returns
 		-------
 		args[0] (Type[Validator]): the self argument passed to the method being wrapped
@@ -61,10 +61,7 @@ class Validator():
 	_set_parent_form(form):
 		Set the parent schema
 
-	required():
-		Append a required validator in the input's validators list
-
-	_required(value):
+	required(value):
 		Verify if the received value is empty
 	'''
 
@@ -156,22 +153,13 @@ class StringValidator(Validator):
 
 	Methods
 	-------
-	email():
-		Append a email validator in the input's validators list
-
-	_email(value):
+	email(value):
 		Verify if the received value is a valid email address
 
-	min(min):
-		Append a minimum validator in the input's validators list
-
-	_min(min, value):
+	min(min, value):
 		Verify if the length of the received value is equal or higher than the min
 
-	max(max):
-		Append a maximum validator in the input's validators list
-
-	_max(max, value):
+	max(max, value):
 		Verify if the length of the received value is equal or lower than the max
 
 	verify():
@@ -282,16 +270,10 @@ class NumericValidator(Validator):
 
 	Methods
 	-------
-	min(min):
-		Append a minimum validator in the input's validators list
-
-	_min(min, value):
+	min(min, value):
 		Verify if the received value is equal or higher than the min
 
-	max(max):
-		Append a maximum validator in the input's validators list
-
-	_max(max, value):
+	max(max, value):
 		Verify if the received value is equal or lower than the max
 
 	verify():
