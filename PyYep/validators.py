@@ -94,6 +94,23 @@ class Validator():
 		self.input_.condition(condition)
 		return self
 
+	def modifier(self, modifier: Callable[[Any], bool]) -> 'Validator':
+		'''
+		Set a modifier to allow changes in the value after validation
+
+		Parameters
+		----------
+		modifier : Callable
+			a callable that executes changes in the value after validation
+
+		Returns
+		-------
+		Validator
+		'''
+
+		self.input_.modifier(modifier)
+		return self
+
 	def _set_parent_form(self, form: 'Schema') -> None:
 		'''
 		Set the parent schema of the validator's input

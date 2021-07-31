@@ -81,6 +81,13 @@ class TestInputItem(unittest.TestCase):
 		input_.value = 'test02'
 		self.assertEqual(form.validate()['test'], 'test02')
 
+	def test_modifier(self):
+		form = Schema([
+			InputItem('test', SimpleInput('test'), 'value').modifier(lambda v: v + '02')
+		])
+
+		self.assertEqual(form.validate()['test'], 'test02')
+
 
 class TestStringValidator(unittest.TestCase):
 	def test_required(self):

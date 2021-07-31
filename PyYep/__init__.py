@@ -145,6 +145,7 @@ class InputItem():
 
 		self._validators = []
 		self._conditions = {}
+		self._modifier = None
 		self.on_fail = on_fail
 		self.on_success = on_success
 
@@ -207,7 +208,7 @@ class InputItem():
 		if self.on_success is not None:
 			self.on_success()
 
-		return result
+		return result if self._modifier is None else self._modifier(result)
 
 	def validate(self, validator: Callable[[Any], None]) -> 'InputItem':
 		'''
@@ -236,6 +237,23 @@ class InputItem():
 		'''
 
 		self._conditions[self._validators[-1]] = condition
+		return self
+
+	def modifier(self, modifier: Callable[[Any], bool]) -> 'InputItem':
+		'''
+		Set a modifier to allow changes in the value after validation
+
+		Parameters
+		----------
+		modifier : Callable
+			a callable that executes changes in the value after validation
+
+		Returns
+		-------
+		InputItem
+		'''
+
+		self._modifier = modifier
 		return self
 
 	def string(self) -> StringValidator:
