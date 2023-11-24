@@ -1,5 +1,6 @@
 import re
 import decimal
+import collections
 import functools
 from typing import Any, Callable, TYPE_CHECKING
 from collections.abc import Iterable
@@ -399,3 +400,125 @@ class NumericValidator(Validator):
 			raise ValidationError(self.name, 'Non-numeric value received in a numeric input')
 
 		return self.input_.verify(value)
+
+
+class ArrayValidator(Validator):
+	'''
+	A class to represent a Array validator, children of Validator.
+
+	...
+
+	Methods
+	-------
+	len(size, value):
+		verify if the size of the received list is equal to size
+
+	min(min, value):
+		Verify if the size of the received list is equal or higher than the min
+
+	max(max, value):
+		Verify if the size of the received list is equal or lower than the max
+
+	verify():
+		Get the validator's input value.
+		If the value is not None converts it to a string and pass it to the input verify method
+	'''
+
+	@validator
+	def len(self, size: int, value: Iterable[Any]) -> None:
+		'''
+		Verify if size of the received list
+
+		Parameters
+		----------
+		value : (any)
+			the list that will be checked
+		size : (int)
+			the expected size of the list
+
+		Raises
+		----------
+		ValidationError:
+			if the size of the list is not equal to the expected
+
+		Returns
+		________
+		None
+		'''
+
+		if len(value) != size:
+			raise ValidationError(self.name, f'Invalid size, expected the list to have {size} items')
+
+	@validator
+	def min(self, min: int, value: Iterable[Any]) -> None:
+		'''
+		Verify if size of the received list is equal or higher than the min
+
+		Parameters
+		----------
+		value : (any)
+			the list that will be checked
+		min : (int)
+			the minimun length allowed
+
+		Raises
+		----------
+		ValidationError:
+			if the length is smaller than the min
+
+		Returns
+		________
+		None
+		'''
+
+		if len(value) < min:
+			raise ValidationError(self.name, f'received list is to small, expected a minimum of {min} items')
+
+	@validator
+	def max(self, max: int, value: Iterable[Any]) -> None:
+		'''
+		Verify if the size of the received list is equal or lower than the max
+
+		Parameters
+		----------
+		value : (any)
+			the list that will be checked
+		max : (int)
+			the maximun length allowed
+
+		Raises
+		----------
+		ValidationError:
+			if the length is larger than the max
+
+		Returns
+		________
+		None
+		'''
+
+		if len(value) > max:
+			raise ValidationError(self.name, 'Value too large received')
+
+	def verify(self) -> dict:
+		'''
+		Get the validator's input value, verify if its a list and pass it to the input verify method
+
+		Raises
+		----------
+		ValidationError:
+			if the received value is not a list
+
+		Returns
+		-------
+		result (list): The value returned by the input verify method
+		'''
+
+		result = getattr(self.input_._input, self.input_._path)
+
+		if callable(result):
+			result = result()
+
+		if (not isinstance(result, collections.abc.Sequence)):
+			raise ValidationError(self.name, 'Invalid value received, expected an array')
+
+		return self.input_.verify(result)
