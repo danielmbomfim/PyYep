@@ -3,6 +3,7 @@ import decimal
 import collections
 import functools
 import PyYep
+from abc import ABC, abstractmethod
 from typing import Any, Callable, Optional, TYPE_CHECKING
 from collections.abc import Iterable
 from PyYep.exceptions import ValidationError
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 	from .__init__ import InputItem, Schema
 
 
-class Validator():
+class Validator(ABC):
 	'''
 	A class to represent a base validator.
 
@@ -69,39 +70,21 @@ class Validator():
 		self.input_ = input_
 		self.name = input_.name
 
-	def condition(self, condition: Callable[[Any], bool]) -> 'Validator':
+	def getInputValue(self) -> Any:
 		'''
-		Set a condition for the execution of the previous validator
-
-		Parameters
-		----------
-		condition : Callable
-			a callable that return a boolean that defines if the condition was satisfied
+		Get the value of the input
 
 		Returns
 		-------
-		Validator
+		Any
 		'''
 
-		self.input_.condition(condition)
-		return self
+		result = getattr(self.input_._input, self.input_._path)
 
-	def modifier(self, modifier: Callable[[Any], bool]) -> 'Validator':
-		'''
-		Set a modifier to allow changes in the value after validation
-
-		Parameters
-		----------
-		modifier : Callable
-			a callable that executes changes in the value after validation
-
-		Returns
-		-------
-		Validator
-		'''
-
-		self.input_.modifier(modifier)
-		return self
+		if callable(result):
+			result = result()
+		
+		return result
 
 	def _set_parent_form(self, form: 'Schema') -> None:
 		'''
@@ -167,5 +150,6 @@ class Validator():
 		if value not in data_structure:
 			raise ValidationError(self.name, 'Value not present in the received data structure')
 
+	@abstractmethod
 	def verify(self):
-		pass
+		raise NotImplementedError

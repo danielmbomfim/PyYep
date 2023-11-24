@@ -145,10 +145,7 @@ class ArrayValidator(Validator):
 		result (list): The value returned by the input verify method
 		'''
 
-		result = getattr(self.input_._input, self.input_._path)
-
-		if callable(result):
-			result = result()
+		result = self.getInputValue()
 
 		if (not isinstance(result, collections.abc.Sequence)):
 			raise ValidationError(self.name, 'Invalid value received, expected an array')

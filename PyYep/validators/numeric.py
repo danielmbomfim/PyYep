@@ -88,10 +88,7 @@ class NumericValidator(Validator):
 		result (Decimal): The value returned by the input verify method
 		'''
 
-		result = getattr(self.input_._input, self.input_._path)
-
-		if callable(result):
-			result = result()
+		result = self.getInputValue()
 
 		try:
 			value = decimal.Decimal(result)

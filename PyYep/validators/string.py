@@ -110,10 +110,7 @@ class StringValidator(Validator):
 		result (str): The value returned by the input verify method
 		'''
 
-		result = getattr(self.input_._input, self.input_._path)
-
-		if callable(result):
-			result = result()
+		result = self.getInputValue()
 
 		if result is not None:
 			result = str(result)
