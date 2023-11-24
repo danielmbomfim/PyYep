@@ -4,7 +4,7 @@ PyYep is a python schema builder for value parsing and validation. Define a sche
 
 PyYep is heavily inspired by [Yup](https://github.com/jquense/yup)
 
-[Docs](https://daniel775.github.io/PyYep/)
+[Docs](https://danielmbomfim.github.io/PyYep/)
 
 ## Install
 
