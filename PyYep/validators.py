@@ -2,7 +2,8 @@ import re
 import decimal
 import collections
 import functools
-from typing import Any, Callable, TYPE_CHECKING
+import PyYep
+from typing import Any, Callable, Optional, TYPE_CHECKING
 from collections.abc import Iterable
 from .exceptions import ValidationError
 
@@ -75,10 +76,23 @@ class Validator():
 		verifies the presence of a value into a data structure
 	'''
 
-	def __init__(self, input_: 'InputItem') -> None:
+	def __init__(self, input_: Optional['InputItem'] = None) -> None:
 		'''
 		Constructs all the necessary attributes for the base validator object.
 
+		Parameters
+		----------
+			input_ (InputItem): the input that will be validated
+		'''
+
+		if input_ is not None:
+			self.input_ = input_
+			self.name = input_.name
+	
+	def setInput(self, input_: 'InitialInput'):
+		'''
+		Sets the input_ property
+		
 		Parameters
 		----------
 			input_ (InputItem): the input that will be validated
@@ -425,6 +439,33 @@ class ArrayValidator(Validator):
 	'''
 
 	@validator
+	def of(self, validator: Validator, value: Iterable[Any]):
+		'''
+		Validate the items of a list
+
+		Parameters
+		----------
+		value : (any)
+			the list that will be checked
+		validator : (Validator)
+			the validation used to check the list items
+
+		Raises
+		----------
+		ValidationError:
+			if any of the items fails validation
+
+		Returns
+		________
+		None
+		'''
+
+		for index, item in enumerate(value):
+			dummyInput = DummyInput(item)
+			validator.setInput(PyYep.InputItem(f'{self.name} -> {index}', dummyInput, 'value'))
+			validator.verify()
+
+	@validator
 	def len(self, size: int, value: Iterable[Any]) -> None:
 		'''
 		Verify if size of the received list
@@ -522,3 +563,8 @@ class ArrayValidator(Validator):
 			raise ValidationError(self.name, 'Invalid value received, expected an array')
 
 		return self.input_.verify(result)
+
+
+class DummyInput():
+	def __init__(self, value):
+		self.value = value
