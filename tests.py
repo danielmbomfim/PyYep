@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
-from PyYep import validators, Schema, InputItem, ValidationError
+from PyYep import Schema, InputItem, ValidationError
+from PyYep.validators.numeric import NumericValidator
 from PyYep.locale.pt_BR import DocumentsValidators as DocumentsValidator_pt_BR
 
 
@@ -190,7 +191,7 @@ class TestArrayValidator(unittest.TestCase):
 	def test_of(self):
 		input_ = SimpleInput([1, 2])
 		form = Schema([
-			InputItem('test', input_, 'value').array().of(validators.NumericValidator())
+			InputItem('test', input_, 'value').array().of(NumericValidator())
 		])
 
 		self.assertEqual(form.validate()['test'], [1, 2])
