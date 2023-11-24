@@ -6,10 +6,11 @@ Classes:
 	InputItem
 	StringValidator
 	NumericValidator
+	ArrayValidator
 	ValidationError
 '''
 from typing import Any, List, Optional, Callable, Union, Dict, TYPE_CHECKING
-from .validators import StringValidator, NumericValidator
+from .validators import StringValidator, NumericValidator, ArrayValidator
 from .exceptions import ValidationError
 
 if TYPE_CHECKING:
@@ -285,3 +286,13 @@ class InputItem():
 		result (NumericValidator): A numeric validator object
 		'''
 		return NumericValidator(self)
+
+	def array(self) -> ArrayValidator:
+		'''
+		create a ArrayValidator using the input item as base
+
+		Returns
+		-------
+		result (ArrayValidator): An array validator object
+		'''
+		return ArrayValidator(self)

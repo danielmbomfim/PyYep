@@ -186,6 +186,35 @@ class TestDocumentValidator_pt_BR(unittest.TestCase):
 		with self.assertRaises(ValidationError): form.validate()
 
 
+class TestArrayValidator(unittest.TestCase):
+	def test_length(self):
+		input_ = SimpleInput([1])
+		form = Schema([
+			InputItem('test', input_, 'value').array().len(1)
+		])
+
+		self.assertEqual(form.validate()['test'], [1])
+		input_.value = []
+		with self.assertRaises(ValidationError): form.validate()
+		input_.value = [1, 2]
+		with self.assertRaises(ValidationError): form.validate()
+
+	def test_min_and_max(self):
+		input_ = SimpleInput([1, 2, 3])
+		form = Schema([
+			InputItem('test', input_, 'value').array().min(3).max(5)
+		])
+
+		self.assertEqual(form.validate()['test'], [1, 2, 3])
+		input_.value = [1, 2, 3, 4, 5]
+		self.assertEqual(form.validate()['test'], [1, 2, 3, 4, 5])
+
+		input_.value = [1, 2]
+		with self.assertRaises(ValidationError): form.validate()
+
+		input_.value = [1, 2, 3, 4, 5, 6]
+		with self.assertRaises(ValidationError): form.validate()
+
 class SimpleInput():
 	def __init__(self, value):
 		self.value = value
