@@ -292,7 +292,7 @@ class TestArrayValidator(unittest.TestCase):
             [
                 InputItem("test", input_, "getValue")
                 .array()
-                .of(NumericValidator())
+                .of(NumericValidator().required())
             ]
         )
 

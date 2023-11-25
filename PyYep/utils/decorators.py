@@ -1,4 +1,9 @@
 import functools
+from typing import Union, TYPE_CHECKING
+import PyYep
+
+if TYPE_CHECKING:
+    from PyYep import InputValueT
 
 
 def validatorMethod(func):
@@ -31,7 +36,25 @@ def validatorMethod(func):
         to the method being wrapped
         """
 
+        if args[0].input_ is None:
+            dummyInput = DummyInput()
+            args[0].setInput(
+                PyYep.InputItem("dummyInput", dummyInput, "get_value")
+            )
+
         args[0].input_ = args[0].input_.validate(lambda v: func(*args, v))
+
         return args[0]
 
     return wrapper
+
+
+class DummyInput:
+    def __init__(self):
+        self.value = None
+
+    def get_value(self) -> Union["InputValueT", None]:
+        return self.value
+
+    def set_value(self, value: "InputValueT") -> "InputValueT":
+        self.value = value

@@ -1,5 +1,4 @@
 import collections
-import PyYep
 from typing import TypeVar
 from collections.abc import Iterable
 from PyYep.validators.validator import Validator
@@ -58,10 +57,7 @@ class ArrayValidator(Validator):
         """
 
         for index, item in enumerate(value):
-            dummyInput = DummyInput(item)
-            validator.setInput(
-                PyYep.InputItem(f"{self.name} -> {index}", dummyInput, "value")
-            )
+            validator.input_._input.set_value(item)
             validator.verify()
 
     @validatorMethod
@@ -169,8 +165,3 @@ class ArrayValidator(Validator):
             )
 
         return self.input_.verify(result)
-
-
-class DummyInput:
-    def __init__(self, value):
-        self.value = value
