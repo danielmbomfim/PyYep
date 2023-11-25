@@ -1,15 +1,15 @@
-from abc import ABC, abstractmethod
-from typing import Any, Optional, TYPE_CHECKING
+from abc import ABCMeta, abstractmethod
+from typing import Optional, TYPE_CHECKING
 from collections.abc import Iterable
 from PyYep.exceptions import ValidationError
 from PyYep.utils.decorators import validatorMethod
 
 
 if TYPE_CHECKING:
-    from .__init__ import InputItem, Schema
+    from PyYep import InputItem, Schema, InputValueT
 
 
-class Validator(ABC):
+class Validator(metaclass=ABCMeta):
     """
     A class to represent a base validator.
 
@@ -17,7 +17,7 @@ class Validator(ABC):
 
     Attributes
     ----------
-    input_ : any
+    input_ : InputT
             the input that will be validated
     name : str
             the name of the input that will be validated
@@ -49,6 +49,9 @@ class Validator(ABC):
                 input_ (InputItem): the input that will be validated
         """
 
+        self.input_ = None
+        self.name = None
+
         if input_ is not None:
             self.input_ = input_
             self.name = input_.name
@@ -65,13 +68,13 @@ class Validator(ABC):
         self.input_ = input_
         self.name = input_.name
 
-    def getInputValue(self) -> Any:
+    def getInputValue(self) -> "InputValueT":
         """
         Get the value of the input
 
         Returns
         -------
-        Any
+        InputValueT
         """
 
         result = getattr(self.input_._input, self.input_._path)
@@ -98,13 +101,13 @@ class Validator(ABC):
         self.input_.form = form
 
     @validatorMethod
-    def required(self, value: Any) -> None:
+    def required(self, value: "InputValueT") -> None:
         """
         Verify if the received value is empty
 
         Parameters
         ----------
-        value : (Any)
+        value : (InputValueT)
                 the value that will be checked
 
         Raises
@@ -123,13 +126,13 @@ class Validator(ABC):
             )
 
     @validatorMethod
-    def in_(self, data_structure: Iterable, value: Any):
+    def in_(self, data_structure: Iterable, value: "InputValueT"):
         """
         Verify if the received value is present in the received data structure
 
         Parameters
         ----------
-        value : (Any)
+        value : (InputValueT)
                 the value that will be checked
         data_structure : (Iterable)
                 a iterable in wich the received value is supposed to be present

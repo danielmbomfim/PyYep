@@ -31,7 +31,7 @@ class NumericValidator(Validator):
 
         Parameters
         ----------
-        value : (any)
+        value : (Decimal)
                 the value that will be checked
         min : (int)
                 the minimun value allowed
@@ -56,7 +56,7 @@ class NumericValidator(Validator):
 
         Parameters
         ----------
-        value : (any)
+        value : (Decimal)
                 the value that will be checked
         max : (int)
                 the maximun length allowed

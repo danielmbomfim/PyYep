@@ -1,10 +1,13 @@
 import collections
 import PyYep
-from typing import Any
+from typing import TypeVar
 from collections.abc import Iterable
 from PyYep.validators.validator import Validator
 from PyYep.exceptions import ValidationError
 from PyYep.utils.decorators import validatorMethod
+
+
+IterableValueT = TypeVar("IterableValueT")
 
 
 class ArrayValidator(Validator):
@@ -33,13 +36,13 @@ class ArrayValidator(Validator):
     """
 
     @validatorMethod
-    def of(self, validator: Validator, value: Iterable[Any]):
+    def of(self, validator: Validator, value: Iterable[IterableValueT]):
         """
         Validate the items of a list
 
         Parameters
         ----------
-        value : (any)
+        value : (Iterable[IterableValueT])
                 the list that will be checked
         validator : (Validator)
                 the validation used to check the list items
@@ -62,13 +65,13 @@ class ArrayValidator(Validator):
             validator.verify()
 
     @validatorMethod
-    def len(self, size: int, value: Iterable[Any]) -> None:
+    def len(self, size: int, value: Iterable[IterableValueT]) -> None:
         """
         Verify if size of the received list
 
         Parameters
         ----------
-        value : (any)
+        value : (Iterable[IterableValueT])
                 the list that will be checked
         size : (int)
                 the expected size of the list
@@ -90,13 +93,13 @@ class ArrayValidator(Validator):
             )
 
     @validatorMethod
-    def min(self, min: int, value: Iterable[Any]) -> None:
+    def min(self, min: int, value: Iterable[IterableValueT]) -> None:
         """
         Verify if size of the received list is equal or higher than the min
 
         Parameters
         ----------
-        value : (any)
+        value : (Iterable[IterableValueT])
                 the list that will be checked
         min : (int)
                 the minimun length allowed
@@ -119,13 +122,13 @@ class ArrayValidator(Validator):
             )
 
     @validatorMethod
-    def max(self, max: int, value: Iterable[Any]) -> None:
+    def max(self, max: int, value: Iterable[IterableValueT]) -> None:
         """
         Verify if the size of the received list is equal or lower than the max
 
         Parameters
         ----------
-        value : (any)
+        value : (Iterable[IterableValueT])
                 the list that will be checked
         max : (int)
                 the maximun length allowed
@@ -162,7 +165,7 @@ class ArrayValidator(Validator):
 
         if not isinstance(result, collections.abc.Sequence):
             raise ValidationError(
-                self.name, "Invalid value received, expected an array"
+                self.name, "Invalid value received, expected an iterable"
             )
 
         return self.input_.verify(result)

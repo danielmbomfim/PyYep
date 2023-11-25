@@ -9,7 +9,15 @@ Classes:
     ArrayValidator
     ValidationError
 """
-from typing import Any, List, Optional, Callable, Union, Dict, TYPE_CHECKING
+from typing import (
+    List,
+    Optional,
+    Callable,
+    Union,
+    Dict,
+    TypeVar,
+    TYPE_CHECKING,
+)
 from PyYep.validators.string import StringValidator
 from PyYep.validators.numeric import NumericValidator
 from PyYep.validators.array import ArrayValidator
@@ -17,6 +25,10 @@ from PyYep.exceptions import ValidationError
 
 if TYPE_CHECKING:
     from .validators import Validator
+
+
+InputT = TypeVar("InputT")
+InputValueT = TypeVar("InputValueT")
 
 
 class Schema:
@@ -69,7 +81,7 @@ class Schema:
         self.on_fail = on_fail
         self.abort_early = abort_early
 
-    def validate(self) -> Dict[str, Any]:
+    def validate(self) -> Dict[str, InputValueT]:
         """
         Execute the inputs validators and return a dict containing
         all the inputs' values
@@ -116,11 +128,11 @@ class InputItem:
             the name of the input item
     _form: Schema
             the parent schema
-    _input: Any
+    _input: InputT
             the input itself
     _path: str
             the property or method name that store the value in the input
-    _validators: List[Callable[[Any], None]]
+    _validators: List[Callable[[InputValueT], None]]
             a list of validators
     on_success: Callable[[], None]
             a callable used as a local success hook
@@ -154,7 +166,7 @@ class InputItem:
     def __init__(
         self,
         name: str,
-        input_: Any,
+        input_: InputT,
         path: str,
         on_success: Optional[Callable[[], None]] = None,
         on_fail: Optional[Callable[[], None]] = None,
@@ -166,7 +178,7 @@ class InputItem:
         ----------
                 name (str):
                     the name of the input item
-                input_ (Any):
+                input_ (InputT):
                     the input itself
                 path (str):
                     the input's property or method name that store the value
@@ -203,13 +215,13 @@ class InputItem:
 
         self.form = form
 
-    def verify(self, result: Optional[Any] = None) -> Any:
+    def verify(self, result: Optional[InputValueT] = None) -> InputValueT:
         """
         Get the input value and execute all the validators
 
         Parameters
         ----------
-        result : Optional[Any]
+        result : Optional[InputValueT]
                 the value stored on the input, if not passed it will use
                 the value returned by the method or attribute with the name
                 stored on the input item _path attribute
@@ -221,7 +233,7 @@ class InputItem:
 
         Returns
         -------
-        result (Any): The value received after all the validation
+        result (InputValueT): The value received after all the validation
         """
 
         if result is None:
@@ -251,7 +263,9 @@ class InputItem:
 
         return result if self._modifier is None else self._modifier(result)
 
-    def validate(self, validator: Callable[[Any], None]) -> "InputItem":
+    def validate(
+        self, validator: Callable[[InputValueT], None]
+    ) -> "InputItem":
         """
         Append a validator in the input item validators list
 
@@ -263,7 +277,9 @@ class InputItem:
         self._validators.append(validator)
         return self
 
-    def condition(self, condition: Callable[[Any], bool]) -> "InputItem":
+    def condition(
+        self, condition: Callable[[InputValueT], bool]
+    ) -> "InputItem":
         """
         Set a condition for the execution of the previous validator
 
@@ -281,7 +297,7 @@ class InputItem:
         self._conditions[self._validators[-1]] = condition
         return self
 
-    def modifier(self, modifier: Callable[[Any], bool]) -> "InputItem":
+    def modifier(self, modifier: Callable[[InputValueT], bool]) -> "InputItem":
         """
         Set a modifier to allow changes in the value after validation
 
