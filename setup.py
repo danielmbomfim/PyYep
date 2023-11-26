@@ -1,13 +1,15 @@
-import os
 import setuptools
+
+__version__ = '1.0.1'
 
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
+
 setuptools.setup(
     name="PyYep",
-    version=os.environ["VERSION"],
+    version=__version__,
     author="Daniel Montalvão Bomfim",
     author_email="daniellsmv@hotmail.com",
     description="A simple schema builder for value parsing and validation",
