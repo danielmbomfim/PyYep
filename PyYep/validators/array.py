@@ -7,6 +7,7 @@ from PyYep.utils.decorators import validatorMethod
 
 
 IterableValueT = TypeVar("IterableValueT")
+ValidatorT = TypeVar("ValidatorT", bound=Validator)
 
 
 class ArrayValidator(Validator):
@@ -35,7 +36,7 @@ class ArrayValidator(Validator):
     """
 
     @validatorMethod
-    def of(self, validator: Validator, value: Iterable[IterableValueT]):
+    def of(self, validator: ValidatorT, value: Iterable[IterableValueT]):
         """
         Validate the items of a list
 
