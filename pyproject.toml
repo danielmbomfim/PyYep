@@ -10,13 +10,16 @@ name = "material"
 
 [tool.semantic_release]
 assets = []
-commit_message = "chore(release): [skip ci[a]] Release v{version}"
+commit_message = "chore(release): [skip ci] Release v{version}"
 commit_parser = "angular"
 logging_use_named_masks = false
 major_on_zero = true
 tag_format = "v{version}"
 version_variables = ["setup.py:__version__"]
-build_command = "python -m build"
+build_command = """
+    python -m pip install build~=0.10.0
+    python -m build .
+"""
 
 [tool.semantic_release.branches.main]
 match = "(main|master)"
