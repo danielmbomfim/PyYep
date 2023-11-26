@@ -1,9 +1,13 @@
 import functools
-from typing import Union, TYPE_CHECKING
+from typing import Union, TypeVar, TYPE_CHECKING
 import PyYep
 
 if TYPE_CHECKING:
     from PyYep import InputValueT
+    from PyYep.validators.validator import Validator
+
+
+T = TypeVar("T", bound="Validator")
 
 
 def validatorMethod(func):
@@ -21,30 +25,34 @@ def validatorMethod(func):
     """
 
     @functools.wraps(func)
-    def wrapper(*args):
+    def wrapper(validator: T, *args):
         """A wrapper function that appends a validator
         in the input's validators list
 
         Parameters
         ----------
+        validator
+            the instance of validator using the decorator
         *args
-            the positional orguments received by the wrapped method
+            the positional arguments received by the wrapped method
 
         Returns
         -------
-        args[0] (Type[Validator]): the self argument passed
-        to the method being wrapped
+        validator Validator:
+            the instance of validator using the decorator
         """
 
-        if args[0].input_ is None:
+        if validator.input_ is None:
             dummyInput = DummyInput()
-            args[0].setInput(
+            validator.setInput(
                 PyYep.InputItem("dummyInput", dummyInput, "get_value")
             )
 
-        args[0].input_ = args[0].input_.validate(lambda v: func(*args, v))
+        validator.input_ = validator.input_.validate(
+            lambda v: func(validator, *args, v)
+        )
 
-        return args[0]
+        return validator
 
     return wrapper
 
