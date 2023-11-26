@@ -101,7 +101,7 @@ class Validator(metaclass=ABCMeta):
         self.input_.form = form
 
     @validatorMethod
-    def required(self, value: "InputValueT") -> None:
+    def required(self, value: "InputValueT") -> "Validator":
         """
         Verify if the received value is empty
 
@@ -117,7 +117,8 @@ class Validator(metaclass=ABCMeta):
 
         Returns
         ________
-        None
+        validator (Validator):
+                the validator being used
         """
 
         if value is None or (not value and value != 0):
@@ -126,7 +127,9 @@ class Validator(metaclass=ABCMeta):
             )
 
     @validatorMethod
-    def in_(self, data_structure: Iterable, value: "InputValueT"):
+    def in_(
+        self, data_structure: Iterable, value: "InputValueT"
+    ) -> "Validator":
         """
         Verify if the received value is present in the received data structure
 
@@ -144,7 +147,8 @@ class Validator(metaclass=ABCMeta):
 
         Returns
         ________
-        None
+        validator (Validator):
+                the validator being used
         """
 
         if value not in data_structure:

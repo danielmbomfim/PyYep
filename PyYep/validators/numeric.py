@@ -25,7 +25,7 @@ class NumericValidator(Validator):
     """
 
     @validatorMethod
-    def min(self, min: int, value: decimal.Decimal) -> None:
+    def min(self, min: int, value: decimal.Decimal) -> "NumericValidator":
         """
         Verify if the received value is equal or higher than the min
 
@@ -43,14 +43,15 @@ class NumericValidator(Validator):
 
         Returns
         ________
-        None
+        validator (NumericValidator):
+                the validator being used
         """
 
         if value < min:
             raise ValidationError(self.name, "Value too small received")
 
     @validatorMethod
-    def max(self, max: int, value: decimal.Decimal) -> None:
+    def max(self, max: int, value: decimal.Decimal) -> "NumericValidator":
         """
         Verify if the the received value is equal or lower than the max
 
@@ -68,7 +69,8 @@ class NumericValidator(Validator):
 
         Returns
         ________
-        None
+        validator (NumericValidator):
+                the validator being used
         """
 
         if value > max:

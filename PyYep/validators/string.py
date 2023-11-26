@@ -30,7 +30,7 @@ class StringValidator(Validator):
     """
 
     @validatorMethod
-    def email(self, value: str) -> None:
+    def email(self, value: str) -> "StringValidator":
         """
         Verify if the received value is a valid email address
 
@@ -46,7 +46,8 @@ class StringValidator(Validator):
 
         Returns
         ________
-        None
+        validator (StringValidator):
+                the validator being used
         """
 
         if re.fullmatch(r"[^@]+@[^@]+\.[^@]+", value) is None:
@@ -55,7 +56,7 @@ class StringValidator(Validator):
             )
 
     @validatorMethod
-    def min(self, min: int, value: str) -> None:
+    def min(self, min: int, value: str) -> "StringValidator":
         """
         Verify if the length of the received value is equal
         or higher than the min
@@ -74,14 +75,15 @@ class StringValidator(Validator):
 
         Returns
         ________
-        None
+        validator (StringValidator):
+                the validator being used
         """
 
         if len(value) < min:
             raise ValidationError(self.name, "Value too short received")
 
     @validatorMethod
-    def max(self, max: int, value: str) -> None:
+    def max(self, max: int, value: str) -> "StringValidator":
         """
         Verify if the length of the received value is equal
         or lower than the max
@@ -100,7 +102,8 @@ class StringValidator(Validator):
 
         Returns
         ________
-        None
+        validator (StringValidator):
+                the validator being used
         """
 
         if len(value) > max:

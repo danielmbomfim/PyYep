@@ -36,7 +36,9 @@ class ArrayValidator(Validator):
     """
 
     @validatorMethod
-    def of(self, validator: ValidatorT, value: Iterable[IterableValueT]):
+    def of(
+        self, validator: ValidatorT, value: Iterable[IterableValueT]
+    ) -> "ArrayValidator":
         """
         Validate the items of a list
 
@@ -54,7 +56,8 @@ class ArrayValidator(Validator):
 
         Returns
         ________
-        None
+        validator (ArrayValidator):
+                the validator being used
         """
 
         for index, item in enumerate(value):
@@ -62,7 +65,9 @@ class ArrayValidator(Validator):
             validator.verify()
 
     @validatorMethod
-    def len(self, size: int, value: Iterable[IterableValueT]) -> None:
+    def len(
+        self, size: int, value: Iterable[IterableValueT]
+    ) -> "ArrayValidator":
         """
         Verify if size of the received list
 
@@ -80,7 +85,8 @@ class ArrayValidator(Validator):
 
         Returns
         ________
-        None
+        validator (ArrayValidator):
+                the validator being used
         """
 
         if len(value) != size:
@@ -90,7 +96,9 @@ class ArrayValidator(Validator):
             )
 
     @validatorMethod
-    def min(self, min: int, value: Iterable[IterableValueT]) -> None:
+    def min(
+        self, min: int, value: Iterable[IterableValueT]
+    ) -> "ArrayValidator":
         """
         Verify if size of the received list is equal or higher than the min
 
@@ -108,7 +116,8 @@ class ArrayValidator(Validator):
 
         Returns
         ________
-        None
+        validator (ArrayValidator):
+                the validator being used
         """
 
         if len(value) < min:
@@ -119,7 +128,9 @@ class ArrayValidator(Validator):
             )
 
     @validatorMethod
-    def max(self, max: int, value: Iterable[IterableValueT]) -> None:
+    def max(
+        self, max: int, value: Iterable[IterableValueT]
+    ) -> "ArrayValidator":
         """
         Verify if the size of the received list is equal or lower than the max
 
@@ -137,7 +148,8 @@ class ArrayValidator(Validator):
 
         Returns
         ________
-        None
+        validator (ArrayValidator):
+                the validator being used
         """
 
         if len(value) > max:
