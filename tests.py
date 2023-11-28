@@ -331,6 +331,19 @@ class TestArrayValidator(unittest.TestCase):
         with self.assertRaises(ValidationError):
             form.validate()
 
+    def test_includes(self):
+        input_ = SimpleInput([1, 2, 3])
+        form = Schema(
+            [InputItem("test", input_, "getValue").array().includes(3)]
+        )
+
+        self.assertEqual(form.validate()["test"], [1, 2, 3])
+
+        input_.value = [1, 2]
+
+        with self.assertRaises(ValidationError):
+            form.validate()
+
 
 class SimpleInput:
     def __init__(self, value):

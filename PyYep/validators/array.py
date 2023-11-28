@@ -1,5 +1,5 @@
 import collections
-from typing import TypeVar
+from typing import TypeVar, Any
 from collections.abc import Iterable
 from PyYep.validators.validator import Validator
 from PyYep.exceptions import ValidationError
@@ -154,6 +154,36 @@ class ArrayValidator(Validator):
 
         if len(value) > max:
             raise ValidationError(self.name, "Value too large received")
+
+    @validatorMethod
+    def includes(
+        self, item: Any, value: Iterable[IterableValueT]
+    ) -> "ArrayValidator":
+        """
+        Verify if iterable contains a given item
+
+        Parameters
+        ----------
+        value : (Iterable[IterableValueT])
+                the list that will be checked
+        item : (int)
+                the value expected to be found on the iterable
+
+        Raises
+        ----------
+        ValidationError:
+                if the item is not contained on the value
+
+        Returns
+        ________
+        validator (ArrayValidator):
+                the validator being used
+        """
+
+        if item not in value:
+            raise ValidationError(
+                self.name, f"Value '{item}' not included on iterable"
+            )
 
     def verify(self) -> dict:
         """
