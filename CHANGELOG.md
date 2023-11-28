@@ -2,9 +2,18 @@
 
 
 
+## v1.2.0 (2023-11-28)
+
+### Feature
+
+* feat: adds a validation method to array validator to test if an item is included on a iterable ([`d5b3da0`](https://github.com/danielmbomfim/PyYep/commit/d5b3da0acfdc2fb3a5c7e14f5ccd23aa01d68ba4))
+
+
 ## v1.1.0 (2023-11-26)
 
 ### Chore
+
+* chore(release): [skip ci] Release v1.1.0 ([`c2aba5e`](https://github.com/danielmbomfim/PyYep/commit/c2aba5e96c38cdfffe0fc02f0ab4b339365f5561))
 
 * chore: implements semantic release ([`75e3ed6`](https://github.com/danielmbomfim/PyYep/commit/75e3ed697697bd71359995960dad761ea4f94c47))
 
