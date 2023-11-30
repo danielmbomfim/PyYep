@@ -106,6 +106,10 @@ class Schema:
                 if self.abort_early:
                     raise error
 
+                if error.inner:
+                    errors.extend(error.inner)
+                    continue
+
                 errors.append(error)
 
         if not self.abort_early and errors:
@@ -213,7 +217,7 @@ class InputItem:
         None
         """
 
-        self.form = form
+        self._form = form
 
     def verify(self, result: Optional[InputValueT] = None) -> InputValueT:
         """
@@ -253,8 +257,8 @@ class InputItem:
             except ValidationError as error:
                 if self.on_fail is not None:
                     self.on_fail()
-                elif self.form.on_fail is not None:
-                    self.form.on_fail()
+                elif self._form is not None and self._form.on_fail is not None:
+                    self._form.on_fail()
 
                 raise error
 

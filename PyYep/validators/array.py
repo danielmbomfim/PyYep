@@ -60,9 +60,20 @@ class ArrayValidator(Validator):
                 the validator being used
         """
 
+        errors = []
+
         for index, item in enumerate(value):
             validator.input_._input.set_value(item)
-            validator.verify()
+
+            try:
+                validator.verify()
+            except ValidationError as error:
+                errors.append(error)
+
+        if errors:
+            raise ValidationError(
+                f"{self.name}[{index}]", "Internal validation erros", errors
+            )
 
     @validatorMethod
     def len(
