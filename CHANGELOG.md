@@ -2,7 +2,22 @@
 
 
 
+## v1.3.0 (2023-12-02)
+
+### Feature
+
+* feat: implements a validator for dicts ([`10cf63e`](https://github.com/danielmbomfim/PyYep/commit/10cf63e7d3794d2fba829b6173d1e93ddcd60e98))
+
+### Fix
+
+* fix: validation on the &#34;of&#34; method of the array validation wont stop at the first error anymore ([`e948375`](https://github.com/danielmbomfim/PyYep/commit/e948375e8c10367666ecc970c817407486457897))
+
+
 ## v1.2.0 (2023-11-28)
+
+### Chore
+
+* chore(release): [skip ci] Release v1.2.0 ([`6a6a1eb`](https://github.com/danielmbomfim/PyYep/commit/6a6a1eb8b5cd61d4f3197fe28db4d2865bafca85))
 
 ### Feature
 
