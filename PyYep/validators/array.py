@@ -211,7 +211,7 @@ class ArrayValidator(Validator):
         result (list): The value returned by the input verify method
         """
 
-        result = self.getInputValue()
+        result = self.get_input_value()
 
         if not isinstance(result, collections.abc.Sequence):
             raise ValidationError(

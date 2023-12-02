@@ -91,7 +91,7 @@ class NumericValidator(Validator):
         result (Decimal): The value returned by the input verify method
         """
 
-        result = self.getInputValue()
+        result = self.get_input_value()
 
         try:
             value = decimal.Decimal(result)

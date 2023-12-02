@@ -1,7 +1,8 @@
-from typing import Dict, Any, TypeVar
+from typing import Dict, Any, Optional, TypeVar
+import PyYep
 from PyYep.validators.validator import Validator
 from PyYep.exceptions import ValidationError
-from PyYep.utils.decorators import validatorMethod
+from PyYep.utils.decorators import validatorMethod, ProxyInput
 
 
 ShapeValidatorT = TypeVar("ShapeValidatorT", bound=Validator)
@@ -49,10 +50,16 @@ class DictValidator(Validator):
                 f"{self.name}.{key}", "Internal validation erros", erros
             )
 
-    def verify(self) -> dict:
+    def verify(self, data: Optional[Dict[Any, Any]] = None) -> dict:
         """
         Get the validator's input value, verify if its a dict
         and pass it to the input verify method
+
+        Parameters
+        ----------
+        value(Optional) : (Dict[Any, Any])
+                the dict that will be checked, this parameter must only be
+                passed when not using the Schema and InputItem objects
 
         Raises
         ----------
@@ -64,7 +71,16 @@ class DictValidator(Validator):
         result (dict): The value returned by the input verify method
         """
 
-        result = self.getInputValue()
+        if self.input_ is None:
+            proxyInput = ProxyInput()
+            proxyInput.set_value(data)
+            self.set_input(PyYep.InputItem("", proxyInput, "get_value"))
+        elif data is not None:
+            proxyInput = ProxyInput()
+            proxyInput.set_value(data)
+            self.input_.set_input("", proxyInput, "get_value")
+
+        result = self.get_input_value()
 
         if not isinstance(result, dict):
             raise ValidationError(

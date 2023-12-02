@@ -120,7 +120,7 @@ class StringValidator(Validator):
         result (str): The value returned by the input verify method
         """
 
-        result = self.getInputValue()
+        result = self.get_input_value()
 
         if result is not None:
             result = str(result)

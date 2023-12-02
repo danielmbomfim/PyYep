@@ -4,12 +4,13 @@ from PyYep import Schema, InputItem, ValidationError
 from PyYep.validators.string import StringValidator
 from PyYep.validators.numeric import NumericValidator
 from PyYep.validators.array import ArrayValidator
+from PyYep.validators.dict import DictValidator
 from PyYep.locale.pt_BR import DocumentsValidators as DocumentsValidator_pt_BR
 
 
 class TestInputItem(unittest.TestCase):
     def test_validate(self):
-        input_ = SimpleInput("test")
+        input_ = DummyInput("test")
 
         def custom_validator(value):
             if value == "test":
@@ -18,7 +19,7 @@ class TestInputItem(unittest.TestCase):
             raise ValidationError("test", "test")
 
         form = Schema(
-            [InputItem("test", input_, "getValue").validate(custom_validator)]
+            [InputItem("test", input_, "get_value").validate(custom_validator)]
         )
 
         self.assertEqual(form.validate()["test"], "test")
@@ -37,19 +38,19 @@ class TestInputItem(unittest.TestCase):
 
         form = Schema(
             [
-                InputItem("test", SimpleInput(""), "getValue").validate(
+                InputItem("test", DummyInput(""), "get_value").validate(
                     custom_validator
                 ),
                 InputItem(
                     "test1",
-                    SimpleInput(""),
-                    "getValue",
+                    DummyInput(""),
+                    "get_value",
                     on_fail=local_error_hook,
                 ).validate(custom_validator),
                 InputItem(
                     "test2",
-                    SimpleInput(""),
-                    "getValue",
+                    DummyInput(""),
+                    "get_value",
                     on_success=local_success_hook,
                 ),
             ],
@@ -75,10 +76,10 @@ class TestInputItem(unittest.TestCase):
 
         form = Schema(
             [
-                InputItem("a", SimpleInput(""), "getValue").validate(
+                InputItem("a", DummyInput(""), "get_value").validate(
                     custom_validator
                 ),
-                InputItem("b", SimpleInput(""), "getValue").validate(
+                InputItem("b", DummyInput(""), "get_value").validate(
                     custom_validator
                 ),
             ],
@@ -94,14 +95,14 @@ class TestInputItem(unittest.TestCase):
             self.assertTrue(error.inner)
 
     def test_conditions(self):
-        input_ = SimpleInput("test01")
+        input_ = DummyInput("test01")
 
         def custom_validator(value):
             raise ValidationError("test", "test")
 
         form = Schema(
             [
-                InputItem("test", input_, "getValue")
+                InputItem("test", input_, "get_value")
                 .validate(custom_validator)
                 .condition(lambda v: v == "test01")
             ]
@@ -116,7 +117,7 @@ class TestInputItem(unittest.TestCase):
     def test_modifier(self):
         form = Schema(
             [
-                InputItem("test", SimpleInput("test"), "getValue").modifier(
+                InputItem("test", DummyInput("test"), "get_value").modifier(
                     lambda v: v + "02"
                 )
             ]
@@ -127,9 +128,9 @@ class TestInputItem(unittest.TestCase):
 
 class TestStringValidator(unittest.TestCase):
     def test_required(self):
-        input_ = SimpleInput("")
+        input_ = DummyInput("")
         form = Schema(
-            [InputItem("test", input_, "getValue").string().required()]
+            [InputItem("test", input_, "get_value").string().required()]
         )
 
         with self.assertRaises(ValidationError):
@@ -140,9 +141,9 @@ class TestStringValidator(unittest.TestCase):
             form.validate()
 
     def test_email(self):
-        input_ = SimpleInput("test@test.com")
+        input_ = DummyInput("test@test.com")
         form = Schema(
-            [InputItem("email", input_, "getValue").string().email()]
+            [InputItem("email", input_, "get_value").string().email()]
         )
         self.assertEqual(form.validate()["email"], "test@test.com")
 
@@ -159,9 +160,9 @@ class TestStringValidator(unittest.TestCase):
             form.validate()
 
     def test_min_and_max(self):
-        input_ = SimpleInput("12345")
+        input_ = DummyInput("12345")
         form = Schema(
-            [InputItem("test", input_, "getValue").string().min(5).max(10)]
+            [InputItem("test", input_, "get_value").string().min(5).max(10)]
         )
 
         self.assertEqual(form.validate()["test"], "12345")
@@ -177,10 +178,10 @@ class TestStringValidator(unittest.TestCase):
             form.validate()
 
     def test_in_(self):
-        input_ = SimpleInput("12345")
+        input_ = DummyInput("12345")
         form = Schema(
             [
-                InputItem("test", input_, "getValue")
+                InputItem("test", input_, "get_value")
                 .string()
                 .in_(["", "1", "12345"])
             ]
@@ -194,9 +195,9 @@ class TestStringValidator(unittest.TestCase):
 
 class TestNumberValidator(unittest.TestCase):
     def test_min_and_max(self):
-        input_ = SimpleInput(5)
+        input_ = DummyInput(5)
         form = Schema(
-            [InputItem("test", input_, "getValue").number().min(5).max(10)]
+            [InputItem("test", input_, "get_value").number().min(5).max(10)]
         )
 
         self.assertEqual(form.validate()["test"], 5)
@@ -214,10 +215,10 @@ class TestNumberValidator(unittest.TestCase):
 
 class TestDocumentValidator_pt_BR(unittest.TestCase):
     def test_cpf(self):
-        input_ = SimpleInput("875.920.020-00")
+        input_ = DummyInput("875.920.020-00")
         form = Schema(
             [
-                InputItem("test", input_, "getValue").validate(
+                InputItem("test", input_, "get_value").validate(
                     DocumentsValidator_pt_BR().cpf
                 )
             ]
@@ -242,10 +243,10 @@ class TestDocumentValidator_pt_BR(unittest.TestCase):
             form.validate()
 
     def test_cnpj(self):
-        input_ = SimpleInput("88.724.415/0001-59")
+        input_ = DummyInput("88.724.415/0001-59")
         form = Schema(
             [
-                InputItem("test", input_, "getValue").validate(
+                InputItem("test", input_, "get_value").validate(
                     DocumentsValidator_pt_BR().cnpj
                 )
             ]
@@ -280,8 +281,8 @@ class TestDocumentValidator_pt_BR(unittest.TestCase):
 
 class TestArrayValidator(unittest.TestCase):
     def test_type_validation(self):
-        input_ = SimpleInput([1, 2])
-        form = Schema([InputItem("test", input_, "getValue").array()])
+        input_ = DummyInput([1, 2])
+        form = Schema([InputItem("test", input_, "get_value").array()])
 
         self.assertEqual(form.validate()["test"], [1, 2])
         input_.value = 1
@@ -289,10 +290,10 @@ class TestArrayValidator(unittest.TestCase):
             form.validate()
 
     def test_of(self):
-        input_ = SimpleInput([1, 2])
+        input_ = DummyInput([1, 2])
         form = Schema(
             [
-                InputItem("test", input_, "getValue")
+                InputItem("test", input_, "get_value")
                 .array()
                 .of(NumericValidator().required())
             ]
@@ -304,8 +305,8 @@ class TestArrayValidator(unittest.TestCase):
             form.validate()
 
     def test_length(self):
-        input_ = SimpleInput([1])
-        form = Schema([InputItem("test", input_, "getValue").array().len(1)])
+        input_ = DummyInput([1])
+        form = Schema([InputItem("test", input_, "get_value").array().len(1)])
 
         self.assertEqual(form.validate()["test"], [1])
         input_.value = []
@@ -316,9 +317,9 @@ class TestArrayValidator(unittest.TestCase):
             form.validate()
 
     def test_min_and_max(self):
-        input_ = SimpleInput([1, 2, 3])
+        input_ = DummyInput([1, 2, 3])
         form = Schema(
-            [InputItem("test", input_, "getValue").array().min(3).max(5)]
+            [InputItem("test", input_, "get_value").array().min(3).max(5)]
         )
 
         self.assertEqual(form.validate()["test"], [1, 2, 3])
@@ -334,9 +335,9 @@ class TestArrayValidator(unittest.TestCase):
             form.validate()
 
     def test_includes(self):
-        input_ = SimpleInput([1, 2, 3])
+        input_ = DummyInput([1, 2, 3])
         form = Schema(
-            [InputItem("test", input_, "getValue").array().includes(3)]
+            [InputItem("test", input_, "get_value").array().includes(3)]
         )
 
         self.assertEqual(form.validate()["test"], [1, 2, 3])
@@ -349,8 +350,8 @@ class TestArrayValidator(unittest.TestCase):
 
 class TestDictValidator(unittest.TestCase):
     def test_type_validation(self):
-        input_ = SimpleInput({"test": 10})
-        form = Schema([InputItem("test", input_, "getValue").dict()])
+        input_ = DummyInput({"test": 10})
+        form = Schema([InputItem("test", input_, "get_value").dict()])
 
         self.assertEqual(form.validate()["test"], {"test": 10})
         input_.value = 1
@@ -360,33 +361,27 @@ class TestDictValidator(unittest.TestCase):
 
     def test_shape(self):
         fakeData = {"string": "test", "number": 10, "list": [1, 2, 3]}
-        input_ = SimpleInput(fakeData)
-        form = Schema(
-            [
-                InputItem("test", input_, "getValue")
-                .dict()
-                .shape(
-                    {
-                        "string": StringValidator().required(),
-                        "number": NumericValidator().max(10).required(),
-                        "list": ArrayValidator().of(
-                            NumericValidator().max(3).required()
-                        ),
-                    }
-                )
-            ]
+
+        schema = DictValidator().shape(
+            {
+                "string": StringValidator().required(),
+                "number": NumericValidator().max(10).required(),
+                "list": ArrayValidator().of(
+                    NumericValidator().max(3).required()
+                ),
+            }
         )
 
-        self.assertEqual(form.validate()["test"], fakeData)
+        self.assertEqual(schema.verify(fakeData), fakeData)
         fakeData["number"] = 11
 
         with self.assertRaises(ValidationError):
-            form.validate()
+            schema.verify(fakeData)
 
 
-class SimpleInput:
+class DummyInput:
     def __init__(self, value):
         self.value = value
 
-    def getValue(self):
+    def get_value(self):
         return self.value
