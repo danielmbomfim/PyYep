@@ -7,6 +7,7 @@ Classes:
     StringValidator
     NumericValidator
     ArrayValidator
+    DictValidator
     ValidationError
 """
 from typing import (
@@ -203,6 +204,24 @@ class InputItem:
         self._modifier = None
         self.on_fail = on_fail
         self.on_success = on_success
+
+    def set_input(self, name: str, input_: InputT, path: str):
+        """
+        Sets the item
+
+        Parameters
+        ----------
+                name (str):
+                    the name of the input item
+                input_ (InputT):
+                    the input itself
+                path (str):
+                    the input's property or method name that store the value
+        """
+
+        self.name = name
+        self._input = input_
+        self._path = path
 
     def _set_parent_form(self, form: Schema) -> None:
         """

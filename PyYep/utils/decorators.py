@@ -43,10 +43,8 @@ def validatorMethod(func):
         """
 
         if validator.input_ is None:
-            dummyInput = DummyInput()
-            validator.setInput(
-                PyYep.InputItem("dummyInput", dummyInput, "get_value")
-            )
+            proxyInput = ProxyInput()
+            validator.set_input(PyYep.InputItem("", proxyInput, "get_value"))
 
         validator.input_ = validator.input_.validate(
             lambda v: func(validator, *args, v)
@@ -57,7 +55,7 @@ def validatorMethod(func):
     return wrapper
 
 
-class DummyInput:
+class ProxyInput:
     def __init__(self):
         self.value = None
 

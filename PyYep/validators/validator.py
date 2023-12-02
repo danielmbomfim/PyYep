@@ -56,7 +56,7 @@ class Validator(metaclass=ABCMeta):
             self.input_ = input_
             self.name = input_.name
 
-    def setInput(self, input_: "InputItem"):
+    def set_input(self, input_: "InputItem"):
         """
         Sets the input_ property
 
@@ -68,7 +68,7 @@ class Validator(metaclass=ABCMeta):
         self.input_ = input_
         self.name = input_.name
 
-    def getInputValue(self) -> "InputValueT":
+    def get_input_value(self) -> "InputValueT":
         """
         Get the value of the input
 
