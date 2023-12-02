@@ -21,6 +21,7 @@ from typing import (
 from PyYep.validators.string import StringValidator
 from PyYep.validators.numeric import NumericValidator
 from PyYep.validators.array import ArrayValidator
+from PyYep.validators.dict import DictValidator
 from PyYep.exceptions import ValidationError
 
 if TYPE_CHECKING:
@@ -347,3 +348,13 @@ class InputItem:
         result (ArrayValidator): An array validator object
         """
         return ArrayValidator(self)
+
+    def dict(self) -> DictValidator:
+        """
+        create a DictValidator using the input item as base
+
+        Returns
+        -------
+        result (DictValidator): A dict validator object
+        """
+        return DictValidator(self)

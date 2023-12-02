@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import Mock
 from PyYep import Schema, InputItem, ValidationError
+from PyYep.validators.string import StringValidator
 from PyYep.validators.numeric import NumericValidator
+from PyYep.validators.array import ArrayValidator
 from PyYep.locale.pt_BR import DocumentsValidators as DocumentsValidator_pt_BR
 
 
@@ -340,6 +342,43 @@ class TestArrayValidator(unittest.TestCase):
         self.assertEqual(form.validate()["test"], [1, 2, 3])
 
         input_.value = [1, 2]
+
+        with self.assertRaises(ValidationError):
+            form.validate()
+
+
+class TestDictValidator(unittest.TestCase):
+    def test_type_validation(self):
+        input_ = SimpleInput({"test": 10})
+        form = Schema([InputItem("test", input_, "getValue").dict()])
+
+        self.assertEqual(form.validate()["test"], {"test": 10})
+        input_.value = 1
+
+        with self.assertRaises(ValidationError):
+            form.validate()
+
+    def test_shape(self):
+        fakeData = {"string": "test", "number": 10, "list": [1, 2, 3]}
+        input_ = SimpleInput(fakeData)
+        form = Schema(
+            [
+                InputItem("test", input_, "getValue")
+                .dict()
+                .shape(
+                    {
+                        "string": StringValidator().required(),
+                        "number": NumericValidator().max(10).required(),
+                        "list": ArrayValidator().of(
+                            NumericValidator().max(3).required()
+                        ),
+                    }
+                )
+            ]
+        )
+
+        self.assertEqual(form.validate()["test"], fakeData)
+        fakeData["number"] = 11
 
         with self.assertRaises(ValidationError):
             form.validate()
