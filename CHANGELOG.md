@@ -2,7 +2,22 @@
 
 
 
+## v1.4.0 (2023-12-09)
+
+### Documentation
+
+* docs: updates README.md ([`84733ae`](https://github.com/danielmbomfim/PyYep/commit/84733aeb00bc15170b9a2adda92feeabfcea2410))
+
+### Feature
+
+* feat: adds support for implicit schemas on dict validation ([`2a51746`](https://github.com/danielmbomfim/PyYep/commit/2a5174631da1b4c0ac87901cfcf3d7f123fd48c8))
+
+
 ## v1.3.0 (2023-12-02)
+
+### Chore
+
+* chore(release): [skip ci] Release v1.3.0 ([`2ace7e9`](https://github.com/danielmbomfim/PyYep/commit/2ace7e9c670174045e3dc41f16a8af0676303bb6))
 
 ### Feature
 
