@@ -42,11 +42,13 @@ def validatorMethod(func):
             the instance of validator using the decorator
         """
 
-        if validator.input_ is None:
-            proxyInput = ProxyInput()
-            validator.set_input(PyYep.InputItem("", proxyInput, "get_value"))
+        if validator.input_item is None:
+            proxy_container = ProxyContainer()
+            validator.set_input_item(
+                PyYep.InputItem("", proxy_container, "get_value")
+            )
 
-        validator.input_ = validator.input_.validate(
+        validator.input_item = validator.input_item.validate(
             lambda v: func(validator, *args, v)
         )
 
@@ -55,7 +57,7 @@ def validatorMethod(func):
     return wrapper
 
 
-class ProxyInput:
+class ProxyContainer:
     def __init__(self):
         self.value = None
 

@@ -120,10 +120,10 @@ class StringValidator(Validator):
         result (str): The value returned by the input verify method
         """
 
-        result = self.get_input_value()
+        result = self.get_input_item_value()
 
         if result is not None:
             result = str(result)
 
-        result = self.input_.verify(result)
+        result = self.input_item.verify(result)
         return result

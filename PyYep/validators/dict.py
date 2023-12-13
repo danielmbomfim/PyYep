@@ -2,7 +2,7 @@ from typing import Dict, Any, Optional, TypeVar
 import PyYep
 from PyYep.validators.validator import Validator
 from PyYep.exceptions import ValidationError
-from PyYep.utils.decorators import validatorMethod, ProxyInput
+from PyYep.utils.decorators import validatorMethod, ProxyContainer
 
 
 ShapeValidatorT = TypeVar("ShapeValidatorT", bound=Validator)
@@ -38,7 +38,7 @@ class DictValidator(Validator):
 
         for key in schema:
             validator = schema[key]
-            validator.input_._input.set_value(value.get(key))
+            validator.input_item.data_container.set_value(value.get(key))
 
             try:
                 validator.verify()
@@ -71,20 +71,24 @@ class DictValidator(Validator):
         result (dict): The value returned by the input verify method
         """
 
-        if self.input_ is None:
-            proxyInput = ProxyInput()
-            proxyInput.set_value(data)
-            self.set_input(PyYep.InputItem("", proxyInput, "get_value"))
+        if self.input_item is None:
+            proxy_container = ProxyContainer()
+            proxy_container.set_value(data)
+            self.set_input_item(
+                PyYep.InputItem("", proxy_container, "get_value")
+            )
         elif data is not None:
-            proxyInput = ProxyInput()
-            proxyInput.set_value(data)
-            self.input_.set_input("", proxyInput, "get_value")
+            proxy_container = ProxyContainer()
+            proxy_container.set_value(data)
+            self.input_item.set_data_container(
+                "", proxy_container, "get_value"
+            )
 
-        result = self.get_input_value()
+        result = self.get_input_item_value()
 
         if not isinstance(result, dict):
             raise ValidationError(
                 self.name, "Invalid value received, expected a dictionary"
             )
 
-        return self.input_.verify(result)
+        return self.input_item.verify(result)

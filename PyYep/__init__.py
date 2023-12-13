@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from .validators import Validator
 
 
-InputT = TypeVar("InputT")
+DataContainerT = TypeVar("DataContainerT")
 InputValueT = TypeVar("InputValueT")
 
 
@@ -60,7 +60,7 @@ class Schema:
         self,
         inputs: Union[List["InputItem"], List["Validator"]],
         on_fail: Optional[Callable[[], None]] = None,
-        abort_early: Optional[int] = True,
+        abort_early: Optional[bool] = True,
     ) -> None:
         """
         Constructs all the necessary attributes for the schema object.
@@ -77,7 +77,7 @@ class Schema:
         """
 
         for item in inputs:
-            item._set_parent_form(self)
+            item.set_schema(self)
 
         self._inputs = inputs
         self.on_fail = on_fail
@@ -132,12 +132,13 @@ class InputItem:
     ----------
     name: str
             the name of the input item
-    _form: Schema
+    _schema: Schema
             the parent schema
-    _input: InputT
-            the input itself
+    data_container: DataContainerT
+            the object containing the data to be validated
     _path: str
-            the property or method name that store the value in the input
+            the property or method name that store the value within
+            the data_container
     _validators: List[Callable[[InputValueT], None]]
             a list of validators
     on_success: Callable[[], None]
@@ -147,7 +148,7 @@ class InputItem:
 
     Methods
     -------
-    _set_parent_form(form):
+    set_schema(form):
             Set the parent schema of the input item
 
     verify(result):
@@ -172,7 +173,7 @@ class InputItem:
     def __init__(
         self,
         name: str,
-        input_: InputT,
+        data_container: DataContainerT,
         path: str,
         on_success: Optional[Callable[[], None]] = None,
         on_fail: Optional[Callable[[], None]] = None,
@@ -184,7 +185,7 @@ class InputItem:
         ----------
                 name (str):
                     the name of the input item
-                input_ (InputT):
+                data_container (DataContainerT):
                     the input itself
                 path (str):
                     the input's property or method name that store the value
@@ -195,8 +196,8 @@ class InputItem:
         """
 
         self.name = name
-        self._form = None
-        self._input = input_
+        self._schema = None
+        self.data_container = data_container
         self._path = path
 
         self._validators = []
@@ -205,7 +206,9 @@ class InputItem:
         self.on_fail = on_fail
         self.on_success = on_success
 
-    def set_input(self, name: str, input_: InputT, path: str):
+    def set_data_container(
+        self, name: str, data_container: DataContainerT, path: str
+    ):
         """
         Sets the item
 
@@ -213,17 +216,17 @@ class InputItem:
         ----------
                 name (str):
                     the name of the input item
-                input_ (InputT):
-                    the input itself
+                data_container (DataContainerT):
+                    the object containing the data to be validated
                 path (str):
                     the input's property or method name that store the value
         """
 
         self.name = name
-        self._input = input_
+        self.data_container = data_container
         self._path = path
 
-    def _set_parent_form(self, form: Schema) -> None:
+    def set_schema(self, form: Schema) -> None:
         """
         Set the parent schema of the input item
 
@@ -237,7 +240,7 @@ class InputItem:
         None
         """
 
-        self._form = form
+        self._schema = form
 
     def verify(self, result: Optional[InputValueT] = None) -> InputValueT:
         """
@@ -261,7 +264,7 @@ class InputItem:
         """
 
         if result is None:
-            result = getattr(self._input, self._path)
+            result = getattr(self.data_container, self._path)
 
         if callable(result):
             result = result()
@@ -277,8 +280,11 @@ class InputItem:
             except ValidationError as error:
                 if self.on_fail is not None:
                     self.on_fail()
-                elif self._form is not None and self._form.on_fail is not None:
-                    self._form.on_fail()
+                elif (
+                    self._schema is not None
+                    and self._schema.on_fail is not None
+                ):
+                    self._schema.on_fail()
 
                 raise error
 

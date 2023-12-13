@@ -17,14 +17,14 @@ class Validator(metaclass=ABCMeta):
 
     Attributes
     ----------
-    input_ : InputT
+    input_item : InputItem
             the input that will be validated
     name : str
             the name of the input that will be validated
 
     Methods
     -------
-    _set_parent_form(form):
+    set_schema(form):
             Set the parent schema
 
     condition(condition):
@@ -40,7 +40,7 @@ class Validator(metaclass=ABCMeta):
             verifies the presence of a value into a data structure
     """
 
-    def __init__(self, input_: Optional["InputItem"] = None) -> None:
+    def __init__(self, input_item: Optional["InputItem"] = None) -> None:
         """
         Constructs all the necessary attributes for the base validator object.
 
@@ -49,14 +49,14 @@ class Validator(metaclass=ABCMeta):
                 input_ (InputItem): the input that will be validated
         """
 
-        self.input_ = None
+        self.input_item = None
         self.name = None
 
-        if input_ is not None:
-            self.input_ = input_
-            self.name = input_.name
+        if input_item is not None:
+            self.input_item = input_item
+            self.name = input_item.name
 
-    def set_input(self, input_: "InputItem"):
+    def set_input_item(self, input_item: "InputItem"):
         """
         Sets the input_ property
 
@@ -65,10 +65,10 @@ class Validator(metaclass=ABCMeta):
                 input_ (InputItem): the input that will be validated
         """
 
-        self.input_ = input_
-        self.name = input_.name
+        self.input_item = input_item
+        self.name = input_item.name
 
-    def get_input_value(self) -> "InputValueT":
+    def get_input_item_value(self) -> "InputValueT":
         """
         Get the value of the input
 
@@ -77,14 +77,14 @@ class Validator(metaclass=ABCMeta):
         InputValueT
         """
 
-        result = getattr(self.input_._input, self.input_._path)
+        result = getattr(self.input_item.data_container, self.input_item._path)
 
         if callable(result):
             result = result()
 
         return result
 
-    def _set_parent_form(self, form: "Schema") -> None:
+    def set_schema(self, form: "Schema") -> None:
         """
         Set the parent schema of the validator's input
 
@@ -98,7 +98,7 @@ class Validator(metaclass=ABCMeta):
         None
         """
 
-        self.input_.form = form
+        self.input_item.form = form
 
     @validatorMethod
     def required(self, value: "InputValueT") -> "Validator":

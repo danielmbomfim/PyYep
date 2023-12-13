@@ -91,7 +91,7 @@ class NumericValidator(Validator):
         result (Decimal): The value returned by the input verify method
         """
 
-        result = self.get_input_value()
+        result = self.get_input_item_value()
 
         try:
             value = decimal.Decimal(result)
@@ -100,4 +100,4 @@ class NumericValidator(Validator):
                 self.name, "Non-numeric value received in a numeric input"
             )
 
-        return self.input_.verify(value)
+        return self.input_item.verify(value)

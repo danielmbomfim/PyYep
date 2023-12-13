@@ -63,7 +63,7 @@ class ArrayValidator(Validator):
         errors = []
 
         for index, item in enumerate(value):
-            validator.input_._input.set_value(item)
+            validator.input_item.data_container.set_value(item)
 
             try:
                 validator.verify()
@@ -211,11 +211,11 @@ class ArrayValidator(Validator):
         result (list): The value returned by the input verify method
         """
 
-        result = self.get_input_value()
+        result = self.get_input_item_value()
 
         if not isinstance(result, collections.abc.Sequence):
             raise ValidationError(
                 self.name, "Invalid value received, expected an iterable"
             )
 
-        return self.input_.verify(result)
+        return self.input_item.verify(result)
