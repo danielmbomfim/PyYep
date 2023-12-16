@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
 from PyYep import Schema, InputItem, ValidationError
+from PyYep.validators.bool import BooleanValidator
 from PyYep.validators.string import StringValidator
 from PyYep.validators.numeric import NumericValidator
 from PyYep.validators.array import ArrayValidator
@@ -387,6 +388,55 @@ class TestDictValidator(unittest.TestCase):
 
         with self.assertRaises(ValidationError):
             schema.verify(fake_data)
+
+
+class TestBooleanValidator(unittest.TestCase):
+    def test_to_be_true(self):
+        form = DictValidator().shape({"test": BooleanValidator().to_be(True)})
+
+        true_values = [True, 1, [1], {"1": 1}]
+        false_values = [False, 0, [], {}, None]
+
+        for value in true_values:
+            self.assertEqual(form.verify({"test": value})["test"], True)
+
+        for value in false_values:
+            with self.assertRaises(ValidationError):
+                form.verify({"test": value})
+
+    def test_to_be_false(self):
+        form = DictValidator().shape({"test": BooleanValidator().to_be(False)})
+
+        true_values = [True, 1, [1], {"1": 1}]
+        false_values = [False, 0, [], {}, None]
+
+        for value in false_values:
+            self.assertEqual(form.verify({"test": value})["test"], False)
+
+        for value in true_values:
+            with self.assertRaises(ValidationError):
+                form.verify({"test": value})
+
+    def test_to_be_true_strict(self):
+        form = DictValidator().shape(
+            {"test": BooleanValidator(strict=True).to_be(True)}
+        )
+        test_values = [1, [1], {"1": 1}]
+
+        for value in test_values:
+            with self.assertRaises(ValidationError):
+                form.verify({"test": value})
+
+    def test_to_be_false_strict(self):
+        form = DictValidator().shape(
+            {"test": BooleanValidator(strict=True).to_be(False)}
+        )
+
+        test_values = [0, [], {}, None]
+
+        for value in test_values:
+            with self.assertRaises(ValidationError):
+                form.verify({"test": value})
 
 
 class DummyInput:
