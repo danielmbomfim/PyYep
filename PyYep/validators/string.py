@@ -1,10 +1,14 @@
 import re
+from typing import TypeVar, cast
 from PyYep.validators.validator import Validator
 from PyYep.exceptions import ValidationError
-from PyYep.utils.decorators import validatorMethod
+from PyYep.utils.decorators import validator_method
 
 
-class StringValidator(Validator):
+T = TypeVar("T", bound=str)
+
+
+class StringValidator(Validator[T]):
     """
     A class to represent a string validator, children of Validator.
 
@@ -29,8 +33,8 @@ class StringValidator(Validator):
             and pass it to the input verify method
     """
 
-    @validatorMethod
-    def email(self, value: str) -> "StringValidator":
+    @validator_method
+    def email(self, value: str) -> None:
         """
         Verify if the received value is a valid email address
 
@@ -55,8 +59,8 @@ class StringValidator(Validator):
                 self.name, "Value for email type does not match a valid format"
             )
 
-    @validatorMethod
-    def min(self, min: int, value: str) -> "StringValidator":
+    @validator_method
+    def min(self, min: int, value: T) -> None:
         """
         Verify if the length of the received value is equal
         or higher than the min
@@ -82,8 +86,8 @@ class StringValidator(Validator):
         if len(value) < min:
             raise ValidationError(self.name, "Value too short received")
 
-    @validatorMethod
-    def max(self, max: int, value: str) -> "StringValidator":
+    @validator_method
+    def max(self, max: int, value: T) -> None:
         """
         Verify if the length of the received value is equal
         or lower than the max
@@ -109,7 +113,7 @@ class StringValidator(Validator):
         if len(value) > max:
             raise ValidationError(self.name, "Value too long received")
 
-    def verify(self) -> dict:
+    def verify(self) -> T | None:
         """
         Get the validator's input value.
         If the value is not None converts it to a string
@@ -123,7 +127,13 @@ class StringValidator(Validator):
         result = self.get_input_item_value()
 
         if result is not None:
-            result = str(result)
+            result = cast(T, str(result))
+
+        if self.input_item is None:
+            raise AttributeError(
+                "It's not possible to use validation on a Validator without an input item."
+            )
 
         result = self.input_item.verify(result)
+
         return result

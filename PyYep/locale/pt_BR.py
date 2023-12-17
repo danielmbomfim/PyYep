@@ -38,13 +38,13 @@ class DocumentsValidators:
 
         if re.fullmatch(r"(^\d{2}.\d{3}.\d{3}/\d{4}-\d{2}$)", value) is None:
             raise ValidationError(
-                None, "Value for CNPJ type does not match a valid format"
+                "", "Value for CNPJ type does not match a valid format"
             )
 
         value = re.sub(r"[^0-9]", "", value)
 
         if len(set([*value])) == 1:
-            raise ValidationError(None, "Invalid CNPJ received")
+            raise ValidationError("", "Invalid CNPJ received")
 
         bases = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
         f_result = 0
@@ -57,9 +57,9 @@ class DocumentsValidators:
             f_result += int(element) * bases[index + 1]
 
         if f_result % 11 < 2 and int(value[-2]) != 0:
-            raise ValidationError(None, "CNPJ value does not pass validation")
+            raise ValidationError("", "CNPJ value does not pass validation")
         elif 11 - (f_result % 11) != int(value[-2]):
-            raise ValidationError(None, "CNPJ value does not pass validation")
+            raise ValidationError("", "CNPJ value does not pass validation")
 
         for index, element in enumerate(value):
             if index == 13:
@@ -68,9 +68,9 @@ class DocumentsValidators:
             s_result += int(element) * bases[index]
 
         if s_result % 11 < 2 and int(value[-1]) != 0:
-            raise ValidationError(None, "CNPJ value does not pass validation")
+            raise ValidationError("", "CNPJ value does not pass validation")
         elif 11 - (s_result % 11) != int(value[-1]):
-            raise ValidationError(None, "CNPJ value does not pass validation")
+            raise ValidationError("", "CNPJ value does not pass validation")
 
     def cpf(self, value: str) -> None:
         """
@@ -91,18 +91,15 @@ class DocumentsValidators:
         None
         """
 
-        if (
-            re.fullmatch(r"(^\d{3}\x2E\d{3}\x2E\d{3}\x2D\d{2}$)", value)
-            is None
-        ):
+        if re.fullmatch(r"(^\d{3}\x2E\d{3}\x2E\d{3}\x2D\d{2}$)", value) is None:
             raise ValidationError(
-                None, "Value for CPF type does not match a valid format"
+                "", "Value for CPF type does not match a valid format"
             )
 
         value = re.sub(r"[^0-9]", "", value)
 
         if len(set([*value])) == 1:
-            raise ValidationError(None, "Invalid CPF received")
+            raise ValidationError("", "Invalid CPF received")
 
         f_result = 0
         s_result = 0
@@ -114,7 +111,7 @@ class DocumentsValidators:
             f_result += int(element) * (10 - index)
 
         if (f_result * 10) % 11 != int(value[-2]):
-            raise ValidationError(None, "CPF value does not pass validation")
+            raise ValidationError("", "CPF value does not pass validation")
 
         for index, element in enumerate(value):
             if 11 - index == 1:
@@ -123,4 +120,4 @@ class DocumentsValidators:
             s_result += int(element) * (11 - index)
 
         if (s_result * 10) % 11 != int(value[-1]):
-            raise ValidationError(None, "CPF value does not pass validation")
+            raise ValidationError("", "CPF value does not pass validation")

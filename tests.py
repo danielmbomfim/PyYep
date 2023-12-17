@@ -76,12 +76,8 @@ class TestInputItem(unittest.TestCase):
 
         form = Schema(
             [
-                InputItem("a", DummyInput(""), "get_value").validate(
-                    custom_validator
-                ),
-                InputItem("b", DummyInput(""), "get_value").validate(
-                    custom_validator
-                ),
+                InputItem("a", DummyInput(""), "get_value").validate(custom_validator),
+                InputItem("b", DummyInput(""), "get_value").validate(custom_validator),
             ],
             abort_early=False,
         )
@@ -115,12 +111,13 @@ class TestInputItem(unittest.TestCase):
         self.assertEqual(form.validate()["test"], "test02")
 
     def test_modifier(self):
+        def modifier(x: str | None) -> str | None:
+            if x is None:
+                return x
+            return x + "02"
+
         form = Schema(
-            [
-                InputItem("test", DummyInput("test"), "get_value").modifier(
-                    lambda v: v + "02"
-                )
-            ]
+            [InputItem[str]("test", DummyInput("test"), "get_value").modifier(modifier)]
         )
 
         self.assertEqual(form.validate()["test"], "test02")
@@ -129,25 +126,23 @@ class TestInputItem(unittest.TestCase):
 class TestStringValidator(unittest.TestCase):
     def test_required(self):
         input_ = DummyInput("")
-        form = Schema(
-            [InputItem("test", input_, "get_value").string().required()]
-        )
+        form = Schema([InputItem("test", input_, "get_value").string().required()])
 
         with self.assertRaises(ValidationError):
             form.validate()
 
-        input_.value = None
+        input_.value = None  # type: ignore
+
         with self.assertRaises(ValidationError):
             form.validate()
 
     def test_email(self):
         input_ = DummyInput("test@test.com")
-        form = Schema(
-            [InputItem("email", input_, "get_value").string().email()]
-        )
+        form = Schema([InputItem("email", input_, "get_value").string().email()])
         self.assertEqual(form.validate()["email"], "test@test.com")
 
-        input_.value = 10
+        input_.value = 10  # type: ignore
+
         with self.assertRaises(ValidationError):
             form.validate()
 
@@ -161,9 +156,7 @@ class TestStringValidator(unittest.TestCase):
 
     def test_min_and_max(self):
         input_ = DummyInput("12345")
-        form = Schema(
-            [InputItem("test", input_, "get_value").string().min(5).max(10)]
-        )
+        form = Schema([InputItem("test", input_, "get_value").string().min(5).max(10)])
 
         self.assertEqual(form.validate()["test"], "12345")
         input_.value = "1234567890"
@@ -180,11 +173,7 @@ class TestStringValidator(unittest.TestCase):
     def test_in_(self):
         input_ = DummyInput("12345")
         form = Schema(
-            [
-                InputItem("test", input_, "get_value")
-                .string()
-                .in_(["", "1", "12345"])
-            ]
+            [InputItem("test", input_, "get_value").string().in_(["", "1", "12345"])]
         )
 
         self.assertEqual(form.validate()["test"], "12345")
@@ -196,9 +185,7 @@ class TestStringValidator(unittest.TestCase):
 class TestNumberValidator(unittest.TestCase):
     def test_min_and_max(self):
         input_ = DummyInput(5)
-        form = Schema(
-            [InputItem("test", input_, "get_value").number().min(5).max(10)]
-        )
+        form = Schema([InputItem("test", input_, "get_value").number().min(5).max(10)])
 
         self.assertEqual(form.validate()["test"], 5)
         input_.value = 10
@@ -285,7 +272,9 @@ class TestArrayValidator(unittest.TestCase):
         form = Schema([InputItem("test", input_, "get_value").array()])
 
         self.assertEqual(form.validate()["test"], [1, 2])
-        input_.value = 1
+
+        input_.value = 1  # type: ignore
+
         with self.assertRaises(ValidationError):
             form.validate()
 
@@ -318,9 +307,7 @@ class TestArrayValidator(unittest.TestCase):
 
     def test_min_and_max(self):
         input_ = DummyInput([1, 2, 3])
-        form = Schema(
-            [InputItem("test", input_, "get_value").array().min(3).max(5)]
-        )
+        form = Schema([InputItem("test", input_, "get_value").array().min(3).max(5)])
 
         self.assertEqual(form.validate()["test"], [1, 2, 3])
         input_.value = [1, 2, 3, 4, 5]
@@ -336,9 +323,7 @@ class TestArrayValidator(unittest.TestCase):
 
     def test_includes(self):
         input_ = DummyInput([1, 2, 3])
-        form = Schema(
-            [InputItem("test", input_, "get_value").array().includes(3)]
-        )
+        form = Schema([InputItem("test", input_, "get_value").array().includes(3)])
 
         self.assertEqual(form.validate()["test"], [1, 2, 3])
 
@@ -354,29 +339,28 @@ class TestDictValidator(unittest.TestCase):
         form = Schema([InputItem("test", input_, "get_value").dict()])
 
         self.assertEqual(form.validate()["test"], {"test": 10})
-        input_.value = 1
+
+        input_.value = 1  # type: ignore
 
         with self.assertRaises(ValidationError):
             form.validate()
 
     def test_shape(self):
-        fakeData = {"string": "test", "number": 10, "list": [1, 2, 3]}
+        fake_data = {"string": "test", "number": 10, "list": [1, 2, 3]}
 
         schema = DictValidator().shape(
             {
                 "string": StringValidator().required(),
                 "number": NumericValidator().max(10).required(),
-                "list": ArrayValidator().of(
-                    NumericValidator().max(3).required()
-                ),
+                "list": ArrayValidator().of(NumericValidator().max(3).required()),
             }
         )
 
-        self.assertEqual(schema.verify(fakeData), fakeData)
-        fakeData["number"] = 11
+        self.assertEqual(schema.verify(fake_data), fake_data)
+        fake_data["number"] = 11
 
         with self.assertRaises(ValidationError):
-            schema.verify(fakeData)
+            schema.verify(fake_data)
 
 
 class DummyInput:

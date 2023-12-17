@@ -1,18 +1,18 @@
-from typing import Dict, Any, Optional, TypeVar
+from __future__ import annotations
+from typing import Dict, Any, TypeGuard, TypeVar, TypedDict
 import PyYep
 from PyYep.validators.validator import Validator
 from PyYep.exceptions import ValidationError
-from PyYep.utils.decorators import validatorMethod, ProxyContainer
+from PyYep.utils.decorators import validator_method, ProxyContainer
 
 
 ShapeValidatorT = TypeVar("ShapeValidatorT", bound=Validator)
+T = TypeVar("T", bound=TypedDict)
 
 
-class DictValidator(Validator):
-    @validatorMethod
-    def shape(
-        self, schema: Dict[Any, ShapeValidatorT], value: Dict[Any, Any]
-    ) -> "DictValidator":
+class DictValidator(Validator[T]):
+    @validator_method
+    def shape(self, schema: Dict[Any, ShapeValidatorT], value: T) -> None:
         """
         Validate the items of a dict
 
@@ -34,23 +34,33 @@ class DictValidator(Validator):
                 the validator being used
         """
 
-        erros = []
+        errors = []
 
         for key in schema:
             validator = schema[key]
+
+            if validator.input_item is None:
+                raise AttributeError(
+                    "It's not possible to set a schema of a validator before setting an input_item."
+                )
+
+            if not is_valid_data_container(validator.input_item.data_container):
+                raise TypeError(
+                    "Inplicit schemas require the usage of ProxyContainer as data_container"
+                )
+
             validator.input_item.data_container.set_value(value.get(key))
 
             try:
                 validator.verify()
             except ValidationError as error:
-                erros.append(error)
+                error.path = f"{self.name}.{key}"
+                errors.append(error)
 
-        if erros:
-            raise ValidationError(
-                f"{self.name}.{key}", "Internal validation erros", erros
-            )
+        if errors:
+            raise ValidationError("", "Internal validation errors", errors)
 
-    def verify(self, data: Optional[Dict[Any, Any]] = None) -> dict:
+    def verify(self, data: T | None = None) -> T:
         """
         Get the validator's input value, verify if its a dict
         and pass it to the input verify method
@@ -74,15 +84,11 @@ class DictValidator(Validator):
         if self.input_item is None:
             proxy_container = ProxyContainer()
             proxy_container.set_value(data)
-            self.set_input_item(
-                PyYep.InputItem("", proxy_container, "get_value")
-            )
+            self.set_input_item(PyYep.InputItem("", proxy_container, "get_value"))
         elif data is not None:
             proxy_container = ProxyContainer()
             proxy_container.set_value(data)
-            self.input_item.set_data_container(
-                "", proxy_container, "get_value"
-            )
+            self.input_item.set_data_container("", proxy_container, "get_value")
 
         result = self.get_input_item_value()
 
@@ -91,4 +97,13 @@ class DictValidator(Validator):
                 self.name, "Invalid value received, expected a dictionary"
             )
 
+        if self.input_item is None:
+            raise AttributeError(
+                "It's not possible to set a schema of a validator before setting an input_item."
+            )
+
         return self.input_item.verify(result)
+
+
+def is_valid_data_container(x: object) -> TypeGuard[ProxyContainer]:
+    return hasattr(x, "set_value")
