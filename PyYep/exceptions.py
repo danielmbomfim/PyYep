@@ -36,5 +36,13 @@ class ValidationError(Exception):
         """
 
         super(ValidationError, self).__init__(message)
-        self.path = path
+        self._path = path
         self.inner = inner
+
+    @property
+    def path(self) -> str:
+        return self._path
+
+    @path.setter
+    def path(self, path: str):
+        self._path = path.replace("._PyYepBlank", "")
