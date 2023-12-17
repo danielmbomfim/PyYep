@@ -54,8 +54,12 @@ class DictValidator(Validator[T]):
             try:
                 validator.verify()
             except ValidationError as error:
-                error.path = f"{self.name}.{key}"
-                errors.append(error)
+                format_error_path(self.name, key, error)
+
+                if not error.inner:
+                    errors.append(error)
+                else:
+                    errors.extend(error.inner)
 
         if errors:
             raise ValidationError("", "Internal validation errors", errors)
@@ -107,3 +111,19 @@ class DictValidator(Validator[T]):
 
 def is_valid_data_container(x: object) -> TypeGuard[ProxyContainer]:
     return hasattr(x, "set_value")
+
+
+def format_error_path(base: str, key: str, error: ValidationError) -> None:
+    message = ""
+
+    if base:
+        message += base + "."
+
+    message += key
+
+    if not error.inner:
+        error.path = message
+        return
+
+    for e in error.inner:
+        e.path = f"{message}.{e.path}"

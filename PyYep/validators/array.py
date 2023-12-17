@@ -74,8 +74,12 @@ class ArrayValidator(Validator[T]):
             try:
                 validator.verify()
             except ValidationError as error:
-                error.path = f"{self.name}[{index}]"
-                errors.append(error)
+                format_error_path(self.name, index, error)
+
+                if not error.inner:
+                    errors.append(error)
+                else:
+                    errors.extend(error.inner)
 
         if errors:
             raise ValidationError("", "Internal validation erros", errors)
@@ -222,3 +226,21 @@ class ArrayValidator(Validator[T]):
 
 def is_valid_data_container(x: object) -> TypeGuard[ProxyContainer]:
     return hasattr(x, "set_value")
+
+
+def format_error_path(base: str, index: int, error: ValidationError) -> None:
+    message = ""
+
+    if base:
+        message += base
+    else:
+        message += "_PyYepBlank"
+
+    message += f"[{index}]"
+
+    if not error.inner:
+        error.path = message
+        return
+
+    for e in error.inner:
+        e.path = f"{message}.{e.path}"
