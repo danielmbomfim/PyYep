@@ -1,6 +1,6 @@
 import setuptools
 
-__version__ = '1.4.0'
+__version__ = "1.4.0"
 
 
 with open("README.md", "r", encoding="utf-8") as fh:
@@ -16,7 +16,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=["PyYep"],
-    python_requires=">=3.10",
+    python_requires=">=3.11",
     url="https://github.com/danielmbomfim/PyYep",
     project_urls={
         "Bug Tracker": "https://github.com/danielmbomfim/PyYep/issues",

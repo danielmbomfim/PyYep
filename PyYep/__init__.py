@@ -10,14 +10,17 @@ Classes:
     DictValidator
     ValidationError
 """
+from __future__ import annotations
 from typing import (
+    Any,
     List,
-    Optional,
     Callable,
-    Union,
-    Dict,
+    Self,
     TypeVar,
+    TypedDict,
+    Generic,
     TYPE_CHECKING,
+    cast,
 )
 from PyYep.validators.string import StringValidator
 from PyYep.validators.numeric import NumericValidator
@@ -26,14 +29,15 @@ from PyYep.validators.dict import DictValidator
 from PyYep.exceptions import ValidationError
 
 if TYPE_CHECKING:
-    from .validators import Validator
+    from PyYep.validators.validator import Validator
 
 
 DataContainerT = TypeVar("DataContainerT")
-InputValueT = TypeVar("InputValueT")
+T = TypeVar("T", bound=Any)
+R = TypeVar("R", bound=TypedDict)
 
 
-class Schema:
+class Schema(Generic[R]):
     """
     A class to represent a schema.
 
@@ -58,9 +62,9 @@ class Schema:
 
     def __init__(
         self,
-        inputs: Union[List["InputItem"], List["Validator"]],
-        on_fail: Optional[Callable[[], None]] = None,
-        abort_early: Optional[bool] = True,
+        inputs: List[Validator | InputItem],
+        on_fail: Callable[[], None] | None = None,
+        abort_early: bool | None = True,
     ) -> None:
         """
         Constructs all the necessary attributes for the schema object.
@@ -83,7 +87,7 @@ class Schema:
         self.on_fail = on_fail
         self.abort_early = abort_early
 
-    def validate(self) -> Dict[str, InputValueT]:
+    def validate(self) -> R:
         """
         Execute the inputs validators and return a dict containing
         all the inputs' values
@@ -95,7 +99,7 @@ class Schema:
 
         Returns
         -------
-        result (dict): a dict containing all the validated values
+        result (R): a dict containing all the validated values
         """
 
         result = {}
@@ -119,10 +123,10 @@ class Schema:
                 "", "One or more inputs failed during validation", inner=errors
             )
 
-        return result
+        return cast(R, result)
 
 
-class InputItem:
+class InputItem(Generic[T]):
     """
     A class to represent a input item.
 
@@ -139,7 +143,7 @@ class InputItem:
     _path: str
             the property or method name that store the value within
             the data_container
-    _validators: List[Callable[[InputValueT], None]]
+    _validators: List[Callable[[T], None]]
             a list of validators
     on_success: Callable[[], None]
             a callable used as a local success hook
@@ -175,9 +179,9 @@ class InputItem:
         name: str,
         data_container: DataContainerT,
         path: str,
-        on_success: Optional[Callable[[], None]] = None,
-        on_fail: Optional[Callable[[], None]] = None,
-    ):
+        on_success: Callable[[], None] | None = None,
+        on_fail: Callable[[], None] | None = None,
+    ) -> None:
         """
         Constructs all the necessary attributes for the input item object.
 
@@ -208,7 +212,7 @@ class InputItem:
 
     def set_data_container(
         self, name: str, data_container: DataContainerT, path: str
-    ):
+    ) -> None:
         """
         Sets the item
 
@@ -242,13 +246,13 @@ class InputItem:
 
         self._schema = form
 
-    def verify(self, result: Optional[InputValueT] = None) -> InputValueT:
+    def verify(self, result: T | None = None) -> T | None:
         """
         Get the input value and execute all the validators
 
         Parameters
         ----------
-        result : Optional[InputValueT]
+        result : Optional[T]
                 the value stored on the input, if not passed it will use
                 the value returned by the method or attribute with the name
                 stored on the input item _path attribute
@@ -260,19 +264,16 @@ class InputItem:
 
         Returns
         -------
-        result (InputValueT): The value received after all the validation
+        result (T): The value received after all the validation
         """
 
         if result is None:
-            result = getattr(self.data_container, self._path)
-
-        if callable(result):
-            result = result()
+            result = self.get_container_value()
 
         for validator in self._validators:
-            if validator in self._conditions and not self._conditions[
-                validator
-            ](result):
+            if validator in self._conditions and not self._conditions[validator](
+                result
+            ):
                 continue
 
             try:
@@ -280,10 +281,7 @@ class InputItem:
             except ValidationError as error:
                 if self.on_fail is not None:
                     self.on_fail()
-                elif (
-                    self._schema is not None
-                    and self._schema.on_fail is not None
-                ):
+                elif self._schema is not None and self._schema.on_fail is not None:
                     self._schema.on_fail()
 
                 raise error
@@ -291,11 +289,20 @@ class InputItem:
         if self.on_success is not None:
             self.on_success()
 
-        return result if self._modifier is None else self._modifier(result)
+        if self._modifier is not None:
+            return self._modifier(result)
 
-    def validate(
-        self, validator: Callable[[InputValueT], None]
-    ) -> "InputItem":
+        return result
+
+    def get_container_value(self) -> T:
+        value = getattr(self.data_container, self._path)
+
+        if callable(value):
+            return value()
+
+        return value
+
+    def validate(self, validator: Callable[[T], None]) -> Self:
         """
         Append a validator in the input item validators list
 
@@ -307,9 +314,7 @@ class InputItem:
         self._validators.append(validator)
         return self
 
-    def condition(
-        self, condition: Callable[[InputValueT], bool]
-    ) -> "InputItem":
+    def condition(self, condition: Callable[[T], bool]) -> Self:
         """
         Set a condition for the execution of the previous validator
 
@@ -327,7 +332,7 @@ class InputItem:
         self._conditions[self._validators[-1]] = condition
         return self
 
-    def modifier(self, modifier: Callable[[InputValueT], bool]) -> "InputItem":
+    def modifier(self, modifier: Callable[[T | None], T | None]) -> Self:
         """
         Set a modifier to allow changes in the value after validation
 
@@ -344,7 +349,7 @@ class InputItem:
         self._modifier = modifier
         return self
 
-    def string(self) -> StringValidator:
+    def string(self) -> StringValidator[T]:
         """
         create a StringValidator using the input item as base
 
@@ -352,9 +357,9 @@ class InputItem:
         -------
         result (StringValidator): A string validator object
         """
-        return StringValidator(self)
+        return StringValidator[T](self)
 
-    def number(self) -> NumericValidator:
+    def number(self) -> NumericValidator[T]:
         """
         create a NumericValidator using the input item as base
 
@@ -362,9 +367,9 @@ class InputItem:
         -------
         result (NumericValidator): A numeric validator object
         """
-        return NumericValidator(self)
+        return NumericValidator[T](self)
 
-    def array(self) -> ArrayValidator:
+    def array(self) -> ArrayValidator[T]:
         """
         create a ArrayValidator using the input item as base
 
@@ -372,9 +377,9 @@ class InputItem:
         -------
         result (ArrayValidator): An array validator object
         """
-        return ArrayValidator(self)
+        return ArrayValidator[T](self)
 
-    def dict(self) -> DictValidator:
+    def dict(self) -> DictValidator[T]:
         """
         create a DictValidator using the input item as base
 
@@ -382,4 +387,4 @@ class InputItem:
         -------
         result (DictValidator): A dict validator object
         """
-        return DictValidator(self)
+        return DictValidator[T](self)

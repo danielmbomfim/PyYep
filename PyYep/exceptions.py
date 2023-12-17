@@ -21,7 +21,7 @@ class ValidationError(Exception):
         self,
         path: str,
         message: str,
-        inner: Optional[List["ValidationError"]] = [],
+        inner: List["ValidationError"] = [],
     ):
         """
         Constructs all the necessary attributes for the validation
