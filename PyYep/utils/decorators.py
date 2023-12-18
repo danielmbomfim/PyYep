@@ -10,7 +10,9 @@ T = TypeVar("T", bound="Validator")
 V = TypeVar("V")
 
 
-def validator_method(func: Callable[[T, *ArgsT, V], None]) -> Callable[[T, *ArgsT], T]:
+def validator_method(
+    func: Callable[[T, *ArgsT, V], None]
+) -> Callable[[T, *ArgsT], T]:
     """Wraps a Validator method to be used as a validator function
 
     Parameters
@@ -43,14 +45,19 @@ def validator_method(func: Callable[[T, *ArgsT, V], None]) -> Callable[[T, *Args
 
         if validator.input_item is None:
             proxy_container = ProxyContainer()
-            validator.set_input_item(PyYep.InputItem("", proxy_container, "get_value"))
+            validator.set_input_item(
+                PyYep.InputItem("", proxy_container, "get_value")
+            )
 
         if validator.input_item is None:
             raise AttributeError(
-                "It's not possible to use validation on a Validator without an input item."
+                "It's not possible to use validation on a Validator "
+                "without an input item."
             )
 
-        validation_method: Callable[[V], None] = lambda v: func(validator, *args, v)
+        validation_method: Callable[[V], None] = lambda v: func(
+            validator, *args, v
+        )
         validator.input_item = validator.input_item.validate(validation_method)
 
         return validator

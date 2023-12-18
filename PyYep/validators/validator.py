@@ -82,7 +82,8 @@ class Validator(Generic[T]):
 
         if self.input_item is None:
             raise AttributeError(
-                "It's not possible to use validation on a Validator without an input item."
+                "It's not possible to use validation on a Validator "
+                "without an input item."
             )
 
         result = getattr(self.input_item.data_container, self.input_item._path)
@@ -108,7 +109,8 @@ class Validator(Generic[T]):
 
         if self.input_item is None:
             raise AttributeError(
-                "It's not possible to set a schema of a validator before setting an input_item."
+                "It's not possible to set a schema of a validator before "
+                "setting an input_item."
             )
 
         self.input_item.set_schema(form)
@@ -135,7 +137,9 @@ class Validator(Generic[T]):
         """
 
         if value is None or (not value and value != 0):
-            raise ValidationError(self.name, "Empty value passed to a required input")
+            raise ValidationError(
+                self.name, "Empty value passed to a required input"
+            )
 
     @validator_method
     def in_(self, data_structure: Iterable, value: "T") -> None:

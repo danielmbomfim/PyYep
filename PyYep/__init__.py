@@ -271,9 +271,9 @@ class InputItem(Generic[T]):
             result = self.get_container_value()
 
         for validator in self._validators:
-            if validator in self._conditions and not self._conditions[validator](
-                result
-            ):
+            if validator in self._conditions and not self._conditions[
+                validator
+            ](result):
                 continue
 
             try:
@@ -281,7 +281,10 @@ class InputItem(Generic[T]):
             except ValidationError as error:
                 if self.on_fail is not None:
                     self.on_fail()
-                elif self._schema is not None and self._schema.on_fail is not None:
+                elif (
+                    self._schema is not None
+                    and self._schema.on_fail is not None
+                ):
                     self._schema.on_fail()
 
                 raise error

@@ -41,12 +41,16 @@ class DictValidator(Validator[T]):
 
             if validator.input_item is None:
                 raise AttributeError(
-                    "It's not possible to set a schema of a validator before setting an input_item."
+                    "It's not possible to set a schema of a validator "
+                    "before setting an input_item."
                 )
 
-            if not is_valid_data_container(validator.input_item.data_container):
+            if not is_valid_data_container(
+                validator.input_item.data_container
+            ):
                 raise TypeError(
-                    "Inplicit schemas require the usage of ProxyContainer as data_container"
+                    "Inplicit schemas require the usage of ProxyContainer "
+                    "as data_container"
                 )
 
             validator.input_item.data_container.set_value(value.get(key))
@@ -88,11 +92,15 @@ class DictValidator(Validator[T]):
         if self.input_item is None:
             proxy_container = ProxyContainer()
             proxy_container.set_value(data)
-            self.set_input_item(PyYep.InputItem("", proxy_container, "get_value"))
+            self.set_input_item(
+                PyYep.InputItem("", proxy_container, "get_value")
+            )
         elif data is not None:
             proxy_container = ProxyContainer()
             proxy_container.set_value(data)
-            self.input_item.set_data_container("", proxy_container, "get_value")
+            self.input_item.set_data_container(
+                "", proxy_container, "get_value"
+            )
 
         result = self.get_input_item_value()
 
@@ -103,7 +111,8 @@ class DictValidator(Validator[T]):
 
         if self.input_item is None:
             raise AttributeError(
-                "It's not possible to set a schema of a validator before setting an input_item."
+                "It's not possible to set a schema of a validator "
+                "before setting an input_item."
             )
 
         return self.input_item.verify(result)

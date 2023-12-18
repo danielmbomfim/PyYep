@@ -91,7 +91,10 @@ class DocumentsValidators:
         None
         """
 
-        if re.fullmatch(r"(^\d{3}\x2E\d{3}\x2E\d{3}\x2D\d{2}$)", value) is None:
+        if (
+            re.fullmatch(r"(^\d{3}\x2E\d{3}\x2E\d{3}\x2D\d{2}$)", value)
+            is None
+        ):
             raise ValidationError(
                 "", "Value for CPF type does not match a valid format"
             )
