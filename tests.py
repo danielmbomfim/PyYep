@@ -76,8 +76,12 @@ class TestInputItem(unittest.TestCase):
 
         form = Schema(
             [
-                InputItem("a", DummyInput(""), "get_value").validate(custom_validator),
-                InputItem("b", DummyInput(""), "get_value").validate(custom_validator),
+                InputItem("a", DummyInput(""), "get_value").validate(
+                    custom_validator
+                ),
+                InputItem("b", DummyInput(""), "get_value").validate(
+                    custom_validator
+                ),
             ],
             abort_early=False,
         )
@@ -117,7 +121,11 @@ class TestInputItem(unittest.TestCase):
             return x + "02"
 
         form = Schema(
-            [InputItem[str]("test", DummyInput("test"), "get_value").modifier(modifier)]
+            [
+                InputItem[str](
+                    "test", DummyInput("test"), "get_value"
+                ).modifier(modifier)
+            ]
         )
 
         self.assertEqual(form.validate()["test"], "test02")
@@ -126,7 +134,9 @@ class TestInputItem(unittest.TestCase):
 class TestStringValidator(unittest.TestCase):
     def test_required(self):
         input_ = DummyInput("")
-        form = Schema([InputItem("test", input_, "get_value").string().required()])
+        form = Schema(
+            [InputItem("test", input_, "get_value").string().required()]
+        )
 
         with self.assertRaises(ValidationError):
             form.validate()
@@ -138,7 +148,9 @@ class TestStringValidator(unittest.TestCase):
 
     def test_email(self):
         input_ = DummyInput("test@test.com")
-        form = Schema([InputItem("email", input_, "get_value").string().email()])
+        form = Schema(
+            [InputItem("email", input_, "get_value").string().email()]
+        )
         self.assertEqual(form.validate()["email"], "test@test.com")
 
         input_.value = 10  # type: ignore
@@ -156,7 +168,9 @@ class TestStringValidator(unittest.TestCase):
 
     def test_min_and_max(self):
         input_ = DummyInput("12345")
-        form = Schema([InputItem("test", input_, "get_value").string().min(5).max(10)])
+        form = Schema(
+            [InputItem("test", input_, "get_value").string().min(5).max(10)]
+        )
 
         self.assertEqual(form.validate()["test"], "12345")
         input_.value = "1234567890"
@@ -173,7 +187,11 @@ class TestStringValidator(unittest.TestCase):
     def test_in_(self):
         input_ = DummyInput("12345")
         form = Schema(
-            [InputItem("test", input_, "get_value").string().in_(["", "1", "12345"])]
+            [
+                InputItem("test", input_, "get_value")
+                .string()
+                .in_(["", "1", "12345"])
+            ]
         )
 
         self.assertEqual(form.validate()["test"], "12345")
@@ -185,7 +203,9 @@ class TestStringValidator(unittest.TestCase):
 class TestNumberValidator(unittest.TestCase):
     def test_min_and_max(self):
         input_ = DummyInput(5)
-        form = Schema([InputItem("test", input_, "get_value").number().min(5).max(10)])
+        form = Schema(
+            [InputItem("test", input_, "get_value").number().min(5).max(10)]
+        )
 
         self.assertEqual(form.validate()["test"], 5)
         input_.value = 10
@@ -307,7 +327,9 @@ class TestArrayValidator(unittest.TestCase):
 
     def test_min_and_max(self):
         input_ = DummyInput([1, 2, 3])
-        form = Schema([InputItem("test", input_, "get_value").array().min(3).max(5)])
+        form = Schema(
+            [InputItem("test", input_, "get_value").array().min(3).max(5)]
+        )
 
         self.assertEqual(form.validate()["test"], [1, 2, 3])
         input_.value = [1, 2, 3, 4, 5]
@@ -323,7 +345,9 @@ class TestArrayValidator(unittest.TestCase):
 
     def test_includes(self):
         input_ = DummyInput([1, 2, 3])
-        form = Schema([InputItem("test", input_, "get_value").array().includes(3)])
+        form = Schema(
+            [InputItem("test", input_, "get_value").array().includes(3)]
+        )
 
         self.assertEqual(form.validate()["test"], [1, 2, 3])
 
@@ -352,7 +376,9 @@ class TestDictValidator(unittest.TestCase):
             {
                 "string": StringValidator().required(),
                 "number": NumericValidator().max(10).required(),
-                "list": ArrayValidator().of(NumericValidator().max(3).required()),
+                "list": ArrayValidator().of(
+                    NumericValidator().max(3).required()
+                ),
             }
         )
 

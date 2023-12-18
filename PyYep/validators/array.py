@@ -58,15 +58,19 @@ class ArrayValidator(Validator[T]):
 
         if validator.input_item is None:
             raise AttributeError(
-                "It's not possible to set a schema of a validator before setting an input_item."
+                "It's not possible to set a schema of a validator "
+                "before setting an input_item."
             )
 
         errors = []
 
         for index, item in enumerate(value):
-            if not is_valid_data_container(validator.input_item.data_container):
+            if not is_valid_data_container(
+                validator.input_item.data_container
+            ):
                 raise TypeError(
-                    "Inplicit schemas require the usage of ProxyContainer as data_container"
+                    "Inplicit schemas require the usage "
+                    "of ProxyContainer as data_container"
                 )
 
             validator.input_item.data_container.set_value(item)
@@ -139,7 +143,8 @@ class ArrayValidator(Validator[T]):
         if len(value) < min:
             raise ValidationError(
                 self.name,
-                "received list is to small, expected a minimum of" f" {min} items",
+                "received list is to small, expected a minimum of"
+                f" {min} items",
             )
 
     @validator_method
@@ -192,7 +197,9 @@ class ArrayValidator(Validator[T]):
         """
 
         if item not in value:
-            raise ValidationError(self.name, f"Value '{item}' not included on iterable")
+            raise ValidationError(
+                self.name, f"Value '{item}' not included on iterable"
+            )
 
     def verify(self) -> Sequence | None:
         """
@@ -218,7 +225,8 @@ class ArrayValidator(Validator[T]):
 
         if self.input_item is None:
             raise AttributeError(
-                "It's not possible to set a schema of a validator before setting an input_item."
+                "It's not possible to set a schema of a validator "
+                "before setting an input_item."
             )
 
         return self.input_item.verify(result)

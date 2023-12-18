@@ -109,7 +109,8 @@ class NumericValidator(Validator[T]):
 
         if self.input_item is None:
             raise AttributeError(
-                "It's not possible to use validation on a Validator without an input item."
+                "It's not possible to use validation on a Validator "
+                "without an input item."
             )
 
         return self.input_item.verify(result)
