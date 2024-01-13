@@ -2,7 +2,36 @@
 
 
 
+## v1.4.1 (2024-01-13)
+
+### Build
+
+* build: bump version os python used on workflows to 3.11 ([`853d23b`](https://github.com/danielmbomfim/PyYep/commit/853d23b95fc1954ae32738be72f0cb030ad5771e))
+
+### Documentation
+
+* docs: updates doc strings ([`3a5a807`](https://github.com/danielmbomfim/PyYep/commit/3a5a8074b685e615dc80e90dfa8e966acc71c2fe))
+
+### Fix
+
+* fix: fix path of nested validation errors ([`2bf196f`](https://github.com/danielmbomfim/PyYep/commit/2bf196fdbb4be3219efe8331c8bda0c8a11c6b95))
+
+* fix: fixes typing errors ([`32be752`](https://github.com/danielmbomfim/PyYep/commit/32be7521df2f8c1eb7bf6a0141fa4977488de0bb))
+
+### Refactor
+
+* refactor: change the name of some attributes and methods to make them more explicit ([`a536283`](https://github.com/danielmbomfim/PyYep/commit/a53628334db0ce939127e9de5b6395be3e242068))
+
+### Style
+
+* style: fix flake8 style erros ([`d8b1eab`](https://github.com/danielmbomfim/PyYep/commit/d8b1eab048bd2a9d4c0dd9cc1f286c1b9f205a5e))
+
+
 ## v1.4.0 (2023-12-09)
+
+### Chore
+
+* chore(release): [skip ci] Release v1.4.0 ([`57dcfef`](https://github.com/danielmbomfim/PyYep/commit/57dcfefbd92e44557fdbe72146027302c251ec0c))
 
 ### Documentation
 
