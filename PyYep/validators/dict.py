@@ -18,20 +18,19 @@ class DictValidator(Validator[T]):
 
         Parameters
         ----------
-        value : (Dict[Any, Any])
-                the dict that will be checked
-        schema : (Dict[Any, Validator])
-                the validators used to check the dict items
+        value : (dict)
+            the dict that will be checked
+        schema : (dict)
+            the validators used to check the dict items
 
         Raises
         ----------
         ValidationError:
-                if any of the items fails validation
+            if any of the items fails validation
 
         Returns
-        ________
-        validator (DictValidator):
-                the validator being used
+        ----------
+        None
         """
 
         errors = []
@@ -75,9 +74,9 @@ class DictValidator(Validator[T]):
 
         Parameters
         ----------
-        value(Optional) : (Dict[Any, Any])
-                the dict that will be checked, this parameter must only be
-                passed when not using the Schema and InputItem objects
+        value(dict, optional) : (dict)
+            the dict that will be checked, this parameter must only be passed
+            when not using the Schema and InputItem objects
 
         Raises
         ----------
@@ -85,7 +84,7 @@ class DictValidator(Validator[T]):
                 if the received value is not a dict
 
         Returns
-        -------
+        ----------
         result (dict): The value returned by the input verify method
         """
 

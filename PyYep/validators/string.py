@@ -17,20 +17,19 @@ class StringValidator(Validator[T]):
     Methods
     -------
     email(value):
-            Verify if the received value is a valid email address
+        Verify if the received value is a valid email address
 
     min(min, value):
-            Verify if the length of the received value is equal
-            or higher than the min
+        Verify if the length of the received value
+        is equal or higher than the min
 
     max(max, value):
-            Verify if the length of the received value is equal
-            or lower than the max
+        Verify if the length of the received value
+        is equal or lower than the max
 
     verify():
-            Get the validator's input value.
-            If the value is not None converts it to a string
-            and pass it to the input verify method
+        Get the validator's input value. If the value is not None converts
+        it to a string and pass it to the input verify method
     """
 
     @validator_method
@@ -41,17 +40,17 @@ class StringValidator(Validator[T]):
         Parameters
         ----------
         value : (str)
-                the value that will be checked
+            the value that will be checked
 
         Raises
         ----------
         ValidationError:
-                if the value is not a valid email address
+            if the value is not a valid email address
+
 
         Returns
-        ________
-        validator (StringValidator):
-                the validator being used
+        ----------
+        None
         """
 
         if re.fullmatch(r"[^@]+@[^@]+\.[^@]+", value) is None:

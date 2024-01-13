@@ -4,17 +4,17 @@ from PyYep.exceptions import ValidationError
 
 class DocumentsValidators:
     """
-    A class to represent group document validators methods.
+    A class grouping methods used for the validation of documents.
 
     ...
 
     Methods
     -------
     cnpj(value):
-            Verify if the received value is a valid cnpj
+        Verify if the received value is a valid cnpj
 
     cpf(value):
-            Verify if the received value is a valid cpf
+        Verify if the received value is a valid cpf
     """
 
     def cnpj(self, value: str) -> None:
@@ -24,15 +24,15 @@ class DocumentsValidators:
         Parameters
         ----------
         value : (str)
-                the value that will be checked
+            the value that will be checked
 
         Raises
         ----------
         ValidationError:
-                if the value is not a valid cnpj
+            if the value is not a valid cnpj
 
         Returns
-        ________
+        ----------
         None
         """
 
@@ -79,15 +79,15 @@ class DocumentsValidators:
         Parameters
         ----------
         value : (str)
-                the value that will be checked
+            the value that will be checked
 
         Raises
         ----------
         ValidationError:
-                if the value is not a valid cpf
+            if the value is not a valid cpf
 
         Returns
-        ________
+        ----------
         None
         """
 
