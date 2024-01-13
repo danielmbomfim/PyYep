@@ -15,22 +15,19 @@ class ArrayValidator(Validator[T]):
     ...
 
     Methods
-    -------
+    ----------
     len(size, value):
-            verify if the size of the received list is equal to size
+        verify if the size of the received list is equal to size
 
     min(min, value):
-            Verify if the size of the received list is equal
-            or higher than the min
+        Verify if the size of the received list is equal or higher than the min
 
     max(max, value):
-            Verify if the size of the received list is equal
-            or lower than the max
+        Verify if the size of the received list is equal or lower than the max
 
     verify():
-            Get the validator's input value.
-            If the value is not None converts it to a string
-            and pass it to the input verify method
+        Get the validator's input value. If the value is not None converts
+        it to a string and pass it to the input verify method
     """
 
     @validator_method
@@ -40,20 +37,19 @@ class ArrayValidator(Validator[T]):
 
         Parameters
         ----------
-        value : (Iterable[IterableValueT])
-                the list that will be checked
+        value : (Sequence)
+            the list that will be checked
         validator : (Validator)
-                the validation used to check the list items
+            the validation used to check the list items
 
         Raises
         ----------
         ValidationError:
-                if any of the items fails validation
+            if any of the items fails validation
 
         Returns
-        ________
-        validator (ArrayValidator):
-                the validator being used
+        ----------
+        None
         """
 
         if validator.input_item is None:
@@ -95,20 +91,19 @@ class ArrayValidator(Validator[T]):
 
         Parameters
         ----------
-        value : (Iterable[IterableValueT])
-                the list that will be checked
+        value : (Sequence)
+            the list that will be checked
         size : (int)
-                the expected size of the list
+            the expected size of the list
 
         Raises
         ----------
         ValidationError:
-                if the size of the list is not equal to the expected
+            if the size of the list is not equal to the expected
 
         Returns
-        ________
-        validator (ArrayValidator):
-                the validator being used
+        ----------
+        None
         """
 
         if len(value) != size:
@@ -124,20 +119,19 @@ class ArrayValidator(Validator[T]):
 
         Parameters
         ----------
-        value : (Iterable[IterableValueT])
-                the list that will be checked
+        value : Sequence
+            the list that will be checked
         min : (int)
-                the minimun length allowed
+            the minimun length allowed
 
         Raises
         ----------
         ValidationError:
-                if the length is smaller than the min
+            if the length is smaller than the min
 
         Returns
-        ________
-        validator (ArrayValidator):
-                the validator being used
+        ----------
+        None
         """
 
         if len(value) < min:
@@ -154,20 +148,19 @@ class ArrayValidator(Validator[T]):
 
         Parameters
         ----------
-        value : (Iterable[IterableValueT])
-                the list that will be checked
+        value : (Sequence)
+            the list that will be checked
         max : (int)
-                the maximun length allowed
+            the maximun length allowed
 
         Raises
         ----------
         ValidationError:
-                if the length is larger than the max
+            if the length is larger than the max
 
         Returns
-        ________
-        validator (ArrayValidator):
-                the validator being used
+        ----------
+        None
         """
 
         if len(value) > max:
@@ -180,20 +173,19 @@ class ArrayValidator(Validator[T]):
 
         Parameters
         ----------
-        value : (Iterable[IterableValueT])
-                the list that will be checked
+        value : (Sequence)
+            the list that will be checked
         item : (int)
-                the value expected to be found on the iterable
+            the value expected to be found on the iterable
 
         Raises
         ----------
         ValidationError:
-                if the item is not contained on the value
+            if the item is not contained on the value
 
         Returns
-        ________
-        validator (ArrayValidator):
-                the validator being used
+        ----------
+        None
         """
 
         if item not in value:
@@ -203,17 +195,18 @@ class ArrayValidator(Validator[T]):
 
     def verify(self) -> Sequence | None:
         """
-        Get the validator's input value, verify if its a list
-        and pass it to the input verify method
+        Get the validator's input value, verify if its a sequence and pass
+        it to the input verify method
 
         Raises
         ----------
         ValidationError:
-                if the received value is not a list
+            if the received value is not a list
 
         Returns
-        -------
-        result (list): The value returned by the input verify method
+        ----------
+        result (Sequence):
+            the value returned by the input
         """
 
         result = self.get_input_item_value()

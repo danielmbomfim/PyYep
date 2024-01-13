@@ -21,7 +21,7 @@ def validator_method(
         the function that will be used as validator
 
     Returns
-    -------
+    ----------
     wrapper (Callable)
         the wrapper function of the decorator
     """
@@ -38,8 +38,8 @@ def validator_method(
             the positional arguments received by the wrapped method
 
         Returns
-        -------
-        validator Validator:
+        ----------
+        Validator:
             the instance of validator using the decorator
         """
 

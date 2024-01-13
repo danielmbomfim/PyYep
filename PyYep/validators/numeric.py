@@ -18,15 +18,14 @@ class NumericValidator(Validator[T]):
     Methods
     -------
     min(min, value):
-            Verify if the received value is equal or higher than the min
+        verify if the received value is equal or higher than the min
 
     max(max, value):
-            Verify if the received value is equal or lower than the max
+        verify if the received value is equal or lower than the max
 
     verify():
-            Get the validator's input value.
-            If the value is not None converts it to a string
-            and pass it to the input verify method
+        get the validator's input value. If the value is not None converts
+        it to a string and pass it to the input verify method
     """
 
     @validator_method
@@ -37,19 +36,18 @@ class NumericValidator(Validator[T]):
         Parameters
         ----------
         value : (Decimal)
-                the value that will be checked
+            the value that will be checked
         min : (int)
-                the minimun value allowed
+            the minimun value allowed
 
         Raises
         ----------
         ValidationError:
-                if the value smaller than the min
+            if the value smaller than the min
 
         Returns
-        ________
-        validator (NumericValidator[T]):
-                the validator being used
+        ----------
+        None
         """
 
         if value < min:
@@ -62,20 +60,19 @@ class NumericValidator(Validator[T]):
 
         Parameters
         ----------
-        value : (Decimal)
-                the value that will be checked
+        value : (float)
+            the value that will be checked
         max : (int)
-                the maximun length allowed
+            the maximun length allowed
 
         Raises
         ----------
         ValidationError:
-                if the value is larger than the max
+            if the value is larger than the max
 
         Returns
-        ________
-        validator (NumericValidator[T]):
-                the validator being used
+        ----------
+        None
         """
 
         if value > max:
@@ -83,17 +80,18 @@ class NumericValidator(Validator[T]):
 
     def verify(self) -> T | None:
         """
-        Get the validator's input value, converts it to a Decimal
-        and pass it to the input verify method
+        Get the validator's input value, verify if its a number and pass
+        it to the input verify method
 
         Raises
         ----------
         ValidationError:
-                if the conversion operation to Decimal is invalid
+            if the conversion operation to Decimal is invalid
 
         Returns
-        -------
-        result (Decimal): The value returned by the input verify method
+        ----------
+        result (float):
+            the value returned by the input verify method
         """
 
         result = self.get_input_item_value()
