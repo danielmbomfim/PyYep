@@ -169,5 +169,5 @@ class Validator(Generic[T]):
                 self.name, "Value not present in the received data structure"
             )
 
-    def verify(self):
+    def verify(self) -> T:
         raise NotImplementedError

@@ -72,7 +72,13 @@ class ArrayValidator(Validator[T]):
             validator.input_item.data_container.set_value(item)
 
             try:
-                validator.verify()
+                result = validator.verify()
+                setter = getattr(value, "__setitem__", None)
+
+                # necessary because some sequencies are not mutable
+                if setter is not None:
+                    setter(index, result)
+
             except ValidationError as error:
                 format_error_path(self.name, index, error)
 

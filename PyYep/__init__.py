@@ -6,6 +6,7 @@ Classes:
     InputItem
     StringValidator
     NumericValidator
+    BooleanValidator
     ArrayValidator
     DictValidator
     ValidationError
@@ -25,6 +26,7 @@ from typing import (
 )
 from PyYep.validators.string import StringValidator
 from PyYep.validators.numeric import NumericValidator
+from PyYep.validators.bool import BooleanValidator
 from PyYep.validators.array import ArrayValidator
 from PyYep.validators.dict import DictValidator
 from PyYep.exceptions import ValidationError
@@ -372,6 +374,16 @@ class InputItem(Generic[T]):
         result (NumericValidator): A numeric validator object
         """
         return NumericValidator[T](self)
+
+    def bool(self, strict: bool = False) -> BooleanValidator[T]:
+        """
+        create a BooleanValidator using the input item as base
+
+        Returns
+        -------
+        result (BooleanValidator): A boolean validator object
+        """
+        return BooleanValidator[T](strict, self)
 
     def array(self) -> ArrayValidator[T]:
         """

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Any, TypeGuard, TypeVar, TypedDict
+from typing import Dict, Any, TypeGuard, TypeVar, cast
 import PyYep
 from PyYep.validators.validator import Validator
 from PyYep.exceptions import ValidationError
@@ -7,7 +7,7 @@ from PyYep.utils.decorators import validator_method, ProxyContainer
 
 
 ShapeValidatorT = TypeVar("ShapeValidatorT", bound=Validator)
-T = TypeVar("T", bound=TypedDict)
+T = TypeVar("T", bound=dict)
 
 
 class DictValidator(Validator[T]):
@@ -55,7 +55,9 @@ class DictValidator(Validator[T]):
             validator.input_item.data_container.set_value(value.get(key))
 
             try:
-                validator.verify()
+                result = validator.verify()
+                value[key] = result
+
             except ValidationError as error:
                 format_error_path(self.name, key, error)
 
@@ -114,7 +116,7 @@ class DictValidator(Validator[T]):
                 "before setting an input_item."
             )
 
-        return self.input_item.verify(result)
+        return cast(T, self.input_item.verify(result))
 
 
 def is_valid_data_container(x: object) -> TypeGuard[ProxyContainer]:
