@@ -375,7 +375,7 @@ class InputItem(Generic[T]):
         """
         return NumericValidator[T](self)
 
-    def bool(self, strict: bool = False) -> BooleanValidator:
+    def bool(self, strict: bool = False) -> BooleanValidator[T]:
         """
         create a BooleanValidator using the input item as base
 
@@ -383,7 +383,7 @@ class InputItem(Generic[T]):
         -------
         result (BooleanValidator): A boolean validator object
         """
-        return BooleanValidator(strict, self)
+        return BooleanValidator[T](strict, self)
 
     def array(self) -> ArrayValidator[T]:
         """
