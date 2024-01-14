@@ -1,4 +1,4 @@
-# PyYep [![CI](https://github.com/danielmbomfim/PyYep/actions/workflows/ci.yaml/badge.svg)](https://github.com/danielmbomfim/PyYep/actions/workflows/ci.yaml) ![PyPI - Version](https://img.shields.io/pypi/v/pyyep) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Coverage Status](https://coveralls.io/repos/github/danielmbomfim/PyYep/badge.svg?branch=master)](https://coveralls.io/github/danielmbomfim/PyYep?branch=master)
+# PyYep [![CI](https://github.com/danielmbomfim/PyYep/actions/workflows/ci.yaml/badge.svg)](https://github.com/danielmbomfim/PyYep/actions/workflows/ci.yaml) ![PyPI - Version](https://img.shields.io/pypi/v/pyyep) [![Downloads](https://static.pepy.tech/badge/pyyep)](https://pepy.tech/project/pyyep) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Coverage Status](https://coveralls.io/repos/github/danielmbomfim/PyYep/badge.svg?branch=master)](https://coveralls.io/github/danielmbomfim/PyYep?branch=master)
 
 PyYep is a python schema builder for value parsing and validation. Define a schema, transform a value to match and validate the inputs with existing validator or custom functions.
 
@@ -79,6 +79,8 @@ except ValidationError:
   - [Number validation](#number-validation)
     - [min](#min-1)
     - [max](#max-1)
+  - [Boolean validation](#boolean-validation)
+    - [to_be](#to_be)
   - [Array validation](#array-validation)
     - [of](#of)
     - [includes](#includes)
@@ -198,6 +200,29 @@ schema = Schema([
 
 schema = DictValidator().shape({
 	"number": NumericValidator().max(10),
+})
+```
+
+### Boolean validation
+
+#### to_be
+
+Set the expected boolean value. The "strict" flag defines if the validator should only accept bool values or attempt to cast the received value as a boolean.
+
+```python
+# Example using the Schema and InputItem objects.
+
+schema = Schema([
+	InputItem("name", input_object, "path-to-input_object-value-property-or-method")
+		.bool(strict=True).to_be(True)
+])
+```
+
+```python
+# Example using the DictValidator.
+
+schema = DictValidator().shape({
+	"number": BooleanValidator(strict=True).to_be(True),
 })
 ```
 
