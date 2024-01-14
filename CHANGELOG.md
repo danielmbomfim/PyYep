@@ -2,21 +2,50 @@
 
 
 
+## v1.5.0 (2024-01-14)
+
+### Feature
+
+* feat: implements a simple boolean validator ([`1603a8b`](https://github.com/danielmbomfim/PyYep/commit/1603a8b2e3422d1a535f0b19e45937f784371720))
+
+### Fix
+
+* fix: fixes bug that caused a inconsistent result when casting was applied during validation using a implicit schema ([`66b757d`](https://github.com/danielmbomfim/PyYep/commit/66b757d16be98de640847c3063783083ed266b7f))
+
+### Unknown
+
+* Merge branch &#39;feat/bool-validation&#39; ([`9e2be41`](https://github.com/danielmbomfim/PyYep/commit/9e2be41adfcd468b9a068f5ce94c7ab4bf72d206))
+
+* Merge branch &#39;master&#39; into feat/bool-validation ([`30cf92b`](https://github.com/danielmbomfim/PyYep/commit/30cf92b9ee5f9bb7f8679708df3ca99ad6469b09))
+
+
 ## v1.4.1 (2024-01-13)
 
 ### Build
 
 * build: bump version os python used on workflows to 3.11 ([`853d23b`](https://github.com/danielmbomfim/PyYep/commit/853d23b95fc1954ae32738be72f0cb030ad5771e))
 
+* build: bump version os python used on workflows to 3.11 ([`3237b8f`](https://github.com/danielmbomfim/PyYep/commit/3237b8fdf568a682b2733eb7d564dd612c067e54))
+
+### Chore
+
+* chore(release): [skip ci] Release v1.4.1 ([`dc59fe6`](https://github.com/danielmbomfim/PyYep/commit/dc59fe60938cda1454ca1d5e5c655e8c18469c7f))
+
 ### Documentation
 
 * docs: updates doc strings ([`3a5a807`](https://github.com/danielmbomfim/PyYep/commit/3a5a8074b685e615dc80e90dfa8e966acc71c2fe))
+
+* docs: updates doc strings ([`62e192c`](https://github.com/danielmbomfim/PyYep/commit/62e192c2428f82cd2c3740e94e559c87aa919d91))
 
 ### Fix
 
 * fix: fix path of nested validation errors ([`2bf196f`](https://github.com/danielmbomfim/PyYep/commit/2bf196fdbb4be3219efe8331c8bda0c8a11c6b95))
 
 * fix: fixes typing errors ([`32be752`](https://github.com/danielmbomfim/PyYep/commit/32be7521df2f8c1eb7bf6a0141fa4977488de0bb))
+
+* fix: fix path of nested validation errors ([`916c146`](https://github.com/danielmbomfim/PyYep/commit/916c1461c7c526f47e973354a4123a02b0bf4aa5))
+
+* fix: fixes typing errors ([`8effe05`](https://github.com/danielmbomfim/PyYep/commit/8effe05ceeb64b65a348a864c1cd1182a7d992b5))
 
 ### Refactor
 
@@ -25,6 +54,8 @@
 ### Style
 
 * style: fix flake8 style erros ([`d8b1eab`](https://github.com/danielmbomfim/PyYep/commit/d8b1eab048bd2a9d4c0dd9cc1f286c1b9f205a5e))
+
+* style: fix flake8 style erros ([`e542941`](https://github.com/danielmbomfim/PyYep/commit/e542941bc507d1a0e3adac4aa3531470fbfb562e))
 
 
 ## v1.4.0 (2023-12-09)
