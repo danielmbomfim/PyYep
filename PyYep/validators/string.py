@@ -127,6 +127,10 @@ class StringValidator(Validator[T]):
 
         if result is not None:
             result = cast(T, str(result))
+        else:
+            raise ValidationError(
+                self.name, "Non-string value received in a string input"
+            )
 
         if self.input_item is None:
             raise AttributeError(
