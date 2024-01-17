@@ -2,7 +2,22 @@
 
 
 
+## v1.5.1 (2024-01-17)
+
+### Documentation
+
+* docs: updates README.md ([`30ee988`](https://github.com/danielmbomfim/PyYep/commit/30ee9881147f7f00e4f6e94f83da7d354473f653))
+
+### Fix
+
+* fix: fixes bug that cause unexpected errors when passing a None value to a StringValidator ([`e2653f1`](https://github.com/danielmbomfim/PyYep/commit/e2653f1f0b801074d9e70e1a52636f0c5693e830))
+
+
 ## v1.5.0 (2024-01-14)
+
+### Chore
+
+* chore(release): [skip ci] Release v1.5.0 ([`ea2e724`](https://github.com/danielmbomfim/PyYep/commit/ea2e724af4a064aa26105d36eaccdfe2c4e43089))
 
 ### Feature
 
